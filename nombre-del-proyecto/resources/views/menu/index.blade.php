@@ -5,15 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú de Opciones</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <style>
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            @if (Auth::check())
-                <h3>Bienvenido, {{ Auth::user()->name }}</h3>
-            @else
-                <h3>Bienvenido, Invitado</h3>
-            @endif
+        <div class="header-content mb-3">
+            <div>
+                @auth
+                    @if ($showWelcomeMessage)
+                        <h3>Bienvenido, {{ Auth::user()->name }}</h3>
+                    @endif
+                @else
+                    <h3>Bienvenido, Invitado</h3>
+                @endauth
+            </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="btn btn-danger">Cerrar sesión</button>

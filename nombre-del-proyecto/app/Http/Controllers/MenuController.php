@@ -7,12 +7,20 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class MenuController extends Controller
 {
     public function index()
     {
-        return view('menu.index');
+        if (!Session::has('welcome_shown')) {
+            Session::put('welcome_shown', true);
+            $showWelcomeMessage = true;
+        } else {
+            $showWelcomeMessage = false;
+        }
+
+        return view('menu.index', compact('showWelcomeMessage'));
     }
 
     public function importar(Request $request)
