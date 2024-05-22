@@ -21,6 +21,13 @@ return new class extends Migration
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();
+            // Plantillas
+            $table->boolean('discos')->default(false);
+            $table->boolean('viajes')->default(false);
+            $table->boolean('contactos')->default(false);
+            $table->boolean('compra')->default(false);
+            $table->boolean('programas')->default(false);
+            $table->boolean('cuentas')->default(false);
         });
     }
 
