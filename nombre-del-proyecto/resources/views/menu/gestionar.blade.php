@@ -18,6 +18,9 @@
             padding: 0;
             cursor: pointer;
         }
+        .table-name {
+            text-transform: capitalize;
+        }
     </style>
 </head>
 <body>
@@ -50,13 +53,15 @@
                     <thead>
                         <tr>
                             <th>Nombre de la Tabla</th>
+                            <th>Nº Registros</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($tables as $table)
+                        @foreach ($tables as $table => $count)
                             <tr>
-                                <td>{{ ucfirst(str_replace('_', ' ', $table)) }}</td>
+                                <td class="table-name">{{ str_replace('_', ' ', $table) }}</td>
+                                <td>{{ $count }}</td>
                                 <td>
                                     <a href="{{ route('table.view', ['table' => $table]) }}" class="btn btn-info btn-sm">Ver</a>
                                     <a href="{{ route('table.edit', ['table' => $table]) }}" class="btn btn-warning btn-sm">Editar</a>

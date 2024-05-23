@@ -53,6 +53,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // Añadir rutas para ver, editar y eliminar tablas
     Route::get('/table/view/{table}', [MenuController::class, 'viewTable'])->name('table.view');
     Route::get('/table/edit/{table}', [MenuController::class, 'editTable'])->name('table.edit');
+    Route::get('/menu/gestionar', [MenuController::class, 'gestionarTablas'])->name('menu.gestionar');
     Route::delete('/table/delete/{table}', [MenuController::class, 'deleteTable'])->name('table.delete');
 });
 

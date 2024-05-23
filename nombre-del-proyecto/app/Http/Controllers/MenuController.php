@@ -9,7 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Collection;
-
+use Illuminate\Pagination\Paginator;
 
 class MenuController extends Controller
 {
@@ -112,6 +112,40 @@ class MenuController extends Controller
     return view('menu.gestionar', [
         'tables' => $paginatedTables,
     ]);
+}
+public function gestionarTablas()
+{
+    $userId = auth()->user()->id;
+    $user = auth()->user();
+
+    $tables = collect([
+        'coleccion_discos' => $user->discos,
+        'agenda_contactos' => $user->contactos,
+        'coleccion_viajes' => $user->viajes,
+        'lista_compra' => $user->compra,
+        'lista_programas' => $user->programas,
+        'lista_cuentas' => $user->cuentas,
+    ])->filter(function ($value) {
+        return $value;
+    });
+
+    $tableData = $tables->mapWithKeys(function ($enabled, $table) use ($userId) {
+        $count = DB::table($table)
+            ->where('id_propietario', $userId)
+            ->orWhere('permiso_visualizar', $userId)
+            ->count();
+        return [$table => $count];
+    });
+
+    // Convertir la colección a una instancia de LengthAwarePaginator
+    $currentPage = Paginator::resolveCurrentPage();
+    $perPage = 10;
+    $currentPageItems = $tableData->slice(($currentPage - 1) * $perPage, $perPage)->all();
+    $paginatedTables = new LengthAwarePaginator($currentPageItems, $tableData->count(), $perPage, $currentPage, [
+        'path' => Paginator::resolveCurrentPath()
+    ]);
+
+    return view('menu.gestionar', ['tables' => $paginatedTables]);
 }
     public function editTable($table)
     {
