@@ -12,11 +12,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\LogoutController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-// Rutas de autenticación generadas manualmente
+// Rutas de autenticación generadas manualmente para usuarios no autenticados
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('register', [RegisteredUserController::class, 'store']);
@@ -31,32 +27,35 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.update');
 });
 
-Route::middleware('auth')->group(function () {
-    Route::get('verify-email', [EmailVerificationPromptController::class, '__invoke'])->name('verification.notice');
+// Redirigir a la página de login si no está autenticado
+Route::get('/', function () {
+    return redirect()->route('login');
+})->middleware('guest');
 
-    Route::get('verify-email/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify');
+// Redirigir a la página de menú si está autenticado
+Route::get('/dashboard', function () {
+    return redirect()->route('menu.index');
+})->middleware('auth');
 
-    Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-        ->middleware('throttle:6,1')
-        ->name('verification.send');
-
-    Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])->name('password.confirm');
-    Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
-
-    Route::post('logout', [LogoutController::class, 'store'])->name('logout');
-});
-
-// Rutas protegidas por autenticación
+// Rutas para usuarios autenticados
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
     Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
     Route::get('/menu/crear', [MenuController::class, 'crear'])->name('menu.crear');
     Route::get('/menu/gestionar', [MenuController::class, 'gestionar'])->name('menu.gestionar');
     Route::get('/menu/importar', [MenuController::class, 'importar'])->name('menu.importar');
     Route::post('/menu/importar', [MenuController::class, 'importTable'])->name('menu.importTable');
+
+    // Ruta para editar el perfil usando el componente de Livewire de Jetstream
+    Route::get('/profile', function () {
+        return redirect('/user/profile');
+    })->name('profile.show');
+
+    // Añadir rutas para ver, editar y eliminar tablas
+    Route::get('/table/view/{table}', [MenuController::class, 'viewTable'])->name('table.view');
+    Route::get('/table/edit/{table}', [MenuController::class, 'editTable'])->name('table.edit');
+    Route::get('/menu/gestionar', [MenuController::class, 'gestionarTablas'])->name('menu.gestionar');
+    Route::delete('/table/delete/{table}', [MenuController::class, 'deleteTable'])->name('table.delete');
 });
+
+// Ruta de logout para usuarios autenticados
+Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

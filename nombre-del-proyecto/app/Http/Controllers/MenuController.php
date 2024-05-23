@@ -7,69 +7,174 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\Paginator;
 
 class MenuController extends Controller
 {
     public function index()
     {
-        return view('menu.index');
-    }
-
-    public function importar(Request $request)
-    {
-        $tables = [];
-        $excludedTables = [
-            'failed_jobs', 'migrations', 'model_has_permissions', 'model_has_roles',
-            'password_reset_tokens', 'permissions', 'personal_access_tokens', 'roles',
-            'role_has_permissions', 'sessions', 'teams', 'team_invitations', 'team_user',
-            'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring', 'users'
-        ];
-        $excludedFields = ['id', 'fecha_creacion', 'ultima_modificacion', 'permiso_visualizar', 'id_propietario'];
-
-        // Obtener todas las tablas
-        $allTables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
-
-        foreach ($allTables as $tableName) {
-            // Excluir tablas específicas
-            if (!in_array($tableName, $excludedTables)) {
-                if (Schema::hasTable($tableName)) {
-                    // Obtener columnas de la tabla
-                    $columns = Schema::getColumnListing($tableName);
-                    // Filtrar los campos excluidos
-                    $filteredColumns = array_diff($columns, $excludedFields);
-                    $tables[$tableName] = $filteredColumns;
-                }
-            }
+        if (!Session::has('welcome_shown')) {
+            Session::put('welcome_shown', true);
+            $showWelcomeMessage = true;
+        } else {
+            $showWelcomeMessage = false;
         }
 
-        // Paginación
-        $perPage = 5;
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $tableCollection = collect($tables);
-        $currentTables = $tableCollection->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $paginatedTables = new LengthAwarePaginator($currentTables, $tableCollection->count(), $perPage);
-        $paginatedTables->setPath($request->url());
-
-        // Obtener el usuario autenticado
-        $user = Auth::user();
-        $importedTables = [
-            'agenda_contactos' => $user->contactos,
-            'coleccion_discos' => $user->discos,
-            'coleccion_viajes' => $user->viajes,
-            'lista_compra' => $user->compra,
-            'lista_programas' => $user->programas,
-            'lista_cuentas' => $user->cuentas,
-        ];
-
-        return view('menu.importar', ['tables' => $paginatedTables, 'importedTables' => $importedTables]);
+        return view('menu.index', compact('showWelcomeMessage'));
     }
+
+    public function importar()
+{
+    $excludedTables = [
+        'failed_jobs', 'migrations', 'model_has_permissions', 'model_has_roles',
+        'password_reset_tokens', 'permissions', 'personal_access_tokens', 'roles',
+        'role_has_permissions', 'sessions', 'teams', 'team_invitations', 'team_user',
+        'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring', 'users'
+    ];
+
+    $excludedFields = ['id', 'fecha_creacion', 'ultima_modificacion', 'permiso_visualizar', 'id_propietario'];
+
+    $tables = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
+
+    $filteredTables = [];
+    foreach ($tables as $table) {
+        if (!in_array($table, $excludedTables)) {
+            $columns = Schema::getColumnListing($table);
+            $filteredColumns = array_diff($columns, $excludedFields);
+            $filteredTables[$table] = $filteredColumns;
+        }
+    }
+
+    // Paginar las tablas, 5 por página
+    $perPage = 5;
+    $currentPage = LengthAwarePaginator::resolveCurrentPage();
+    $currentPageItems = array_slice($filteredTables, ($currentPage - 1) * $perPage, $perPage);
+
+    $paginatedTables = new LengthAwarePaginator(
+        $currentPageItems,
+        count($filteredTables),
+        $perPage,
+        $currentPage,
+        ['path' => LengthAwarePaginator::resolveCurrentPath()]
+    );
+
+    $user = auth()->user();
+
+    $importedTables = [
+        'agenda_contactos' => $user->contactos,
+        'coleccion_discos' => $user->discos,
+        'coleccion_viajes' => $user->viajes,
+        'lista_compra' => $user->compra,
+        'lista_programas' => $user->programas,
+        'lista_cuentas' => $user->cuentas,
+    ];
+
+    return view('menu.importar', [
+        'tables' => $paginatedTables,
+        'importedTables' => $importedTables
+    ]);
+}
 
     public function gestionar()
+{
+    $user = auth()->user();
+
+    // Definir las tablas y sus campos correspondientes en la tabla users
+    $tableMappings = [
+        'coleccion_discos' => 'discos',
+        'agenda_contactos' => 'contactos',
+        'coleccion_viajes' => 'viajes',
+        'lista_compra' => 'compra',
+        'lista_programas' => 'programas',
+        'lista_cuentas' => 'cuentas',
+    ];
+
+    // Filtrar las tablas que el usuario puede ver
+    $tables = collect(array_keys($tableMappings))->filter(function ($table) use ($user, $tableMappings) {
+        return $user->{$tableMappings[$table]};
+    });
+
+    // Paginar las tablas, 10 por página
+    $perPage = 10;
+    $currentPage = LengthAwarePaginator::resolveCurrentPage();
+    $currentPageItems = $tables->slice(($currentPage - 1) * $perPage, $perPage)->all();
+
+    $paginatedTables = new LengthAwarePaginator(
+        $currentPageItems,
+        $tables->count(),
+        $perPage,
+        $currentPage,
+        ['path' => LengthAwarePaginator::resolveCurrentPath()]
+    );
+
+    return view('menu.gestionar', [
+        'tables' => $paginatedTables,
+    ]);
+}
+public function gestionarTablas()
+{
+    $userId = auth()->user()->id;
+    $user = auth()->user();
+
+    $tables = collect([
+        'coleccion_discos' => $user->discos,
+        'agenda_contactos' => $user->contactos,
+        'coleccion_viajes' => $user->viajes,
+        'lista_compra' => $user->compra,
+        'lista_programas' => $user->programas,
+        'lista_cuentas' => $user->cuentas,
+    ])->filter(function ($value) {
+        return $value;
+    });
+
+    $tableData = $tables->mapWithKeys(function ($enabled, $table) use ($userId) {
+        $count = DB::table($table)
+            ->where('id_propietario', $userId)
+            ->orWhere('permiso_visualizar', $userId)
+            ->count();
+        return [$table => $count];
+    });
+
+    // Convertir la colección a una instancia de LengthAwarePaginator
+    $currentPage = Paginator::resolveCurrentPage();
+    $perPage = 10;
+    $currentPageItems = $tableData->slice(($currentPage - 1) * $perPage, $perPage)->all();
+    $paginatedTables = new LengthAwarePaginator($currentPageItems, $tableData->count(), $perPage, $currentPage, [
+        'path' => Paginator::resolveCurrentPath()
+    ]);
+
+    return view('menu.gestionar', ['tables' => $paginatedTables]);
+}
+    public function editTable($table)
     {
-        // Suponiendo que $tables es una lista de nombres de tablas para gestionar
-        $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
-        return view('menu.gestionar', compact('tables'));
+        // Lógica para editar la tabla
+        // Devuelve una vista con un formulario de edición para la tabla específica
+        return view('menu.edit', compact('table'));
     }
+    public function deleteTable($table)
+    {
+        \Schema::dropIfExists($table);
+        return redirect()->route('menu.gestionar')->with('success', 'Tabla eliminada con éxito');
+    }
+    public function viewTable($table)
+    {
+        // Verificar si la tabla existe
+        if (!Schema::hasTable($table)) {
+            return redirect()->route('menu.gestionar')->with('error', 'La tabla no existe.');
+        }
+    
+        // Obtener datos de la tabla
+        $data = DB::table($table)->get();
+    
+        return view('menu.view', [
+            'table' => $table,
+            'data' => $data
+        ]);
+    }
+    
+
 
     public function importTable(Request $request)
     {
