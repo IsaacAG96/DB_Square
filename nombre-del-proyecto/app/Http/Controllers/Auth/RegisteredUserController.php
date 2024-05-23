@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 
 class RegisteredUserController extends Controller
@@ -35,6 +34,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('menu.index'); // Redirigir a menu.index
+        return redirect('/dashboard');
     }
 }
