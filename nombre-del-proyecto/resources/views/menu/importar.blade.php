@@ -16,16 +16,43 @@
             font-size: 1.5em;
             color: green;
         }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .profile-section {
+            text-align: right;
+        }
+        .profile-section img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+        .profile-button {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="header-content mb-3">
         <h3>Importar Tablas</h3>
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="btn btn-danger">Cerrar sesión</button>
-        </form>
+        <div class="profile-section">
+            @auth
+                <a href="{{ route('profile.show') }}" class="profile-button">
+                    <img src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://via.placeholder.com/50' }}" alt="Perfil">
+                </a>
+            @endauth
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn btn-danger mt-2">Cerrar sesión</button>
+            </form>
+        </div>
     </div>
     <div class="card">
         <div class="card-header">

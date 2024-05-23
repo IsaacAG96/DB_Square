@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Collection;
 
 class MenuController extends Controller
 {
@@ -74,10 +75,36 @@ class MenuController extends Controller
 
     public function gestionar()
     {
-        // Suponiendo que $tables es una lista de nombres de tablas para gestionar
-        $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
-        return view('menu.gestionar', compact('tables'));
+        $tables = \Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
+        $tables = collect($tables);
+    
+        // Paginar las tablas, 10 por página
+        $perPage = 10;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $currentPageItems = $tables->slice(($currentPage - 1) * $perPage, $perPage)->all();
+    
+        $paginatedTables = new LengthAwarePaginator(
+            $currentPageItems,
+            $tables->count(),
+            $perPage,
+            $currentPage,
+            ['path' => LengthAwarePaginator::resolveCurrentPath()]
+        );
+    
+        return view('menu.gestionar', ['tables' => $paginatedTables]);
     }
+    public function editTable($table)
+    {
+        // Lógica para editar la tabla
+        // Devuelve una vista con un formulario de edición para la tabla específica
+        return view('menu.edit', compact('table'));
+    }
+    public function deleteTable($table)
+    {
+        \Schema::dropIfExists($table);
+        return redirect()->route('menu.gestionar')->with('success', 'Tabla eliminada con éxito');
+    }
+
 
     public function importTable(Request $request)
     {

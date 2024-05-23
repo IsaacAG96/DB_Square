@@ -11,6 +11,27 @@
             justify-content: space-between;
             align-items: center;
         }
+        .profile-section {
+            text-align: right;
+        }
+        .profile-section img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+        .profile-button {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+        .profile-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #555;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -25,10 +46,17 @@
                     <h3>Bienvenido, Invitado</h3>
                 @endauth
             </div>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-danger">Cerrar sesión</button>
-            </form>
+            <div class="profile-section">
+                @auth
+                    <a href="{{ route('profile.show') }}" class="profile-button">
+                        <img src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://via.placeholder.com/50' }}" alt="Perfil">
+                    </a>
+                    @endauth
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger mt-2">Cerrar sesión</button>
+                </form>
+            </div>
         </div>
         <div class="card">
             <div class="card-header">
@@ -52,3 +80,4 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

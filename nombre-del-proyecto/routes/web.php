@@ -12,7 +12,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\LogoutController;
 
-// Rutas de autenticación generadas manualmente
+// Rutas de autenticación generadas manualmente para usuarios no autenticados
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('register', [RegisteredUserController::class, 'store']);
@@ -32,7 +32,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 })->middleware('guest');
 
-// Aplicar middleware de autenticación a todas las demás rutas
+// Rutas para usuarios autenticados
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
@@ -43,4 +43,17 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/menu/gestionar', [MenuController::class, 'gestionar'])->name('menu.gestionar');
     Route::get('/menu/importar', [MenuController::class, 'importar'])->name('menu.importar');
     Route::post('/menu/importar', [MenuController::class, 'importTable'])->name('menu.importTable');
+
+    // Ruta para editar el perfil usando el componente de Livewire de Jetstream
+    Route::get('/profile', function () {
+        return redirect('/user/profile');
+    })->name('profile.show');
+
+    // Añadir rutas para editar y eliminar tablas
+    Route::get('/table/edit/{table}', [MenuController::class, 'editTable'])->name('table.edit');
+    Route::delete('/table/delete/{table}', [MenuController::class, 'deleteTable'])->name('table.delete');
 });
+
+// Ruta de logout para usuarios autenticados
+Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
