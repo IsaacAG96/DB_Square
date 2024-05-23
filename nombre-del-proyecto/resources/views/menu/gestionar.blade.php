@@ -41,34 +41,43 @@
             <h3>Lista de Tablas</h3>
         </div>
         <div class="card-body">
-            <!-- Aquí puedes agregar el contenido para gestionar las tablas -->
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Nombre de la Tabla</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($tables as $table)
+            @if ($tables->isEmpty())
+                <div class="alert alert-info" role="alert">
+                    No hay tablas disponibles para mostrar.
+                </div>
+            @else
+                <table class="table table-striped">
+                    <thead>
                         <tr>
-                            <td>{{ $table }}</td>
-                            <td>
-                                <a href="{{ route('table.edit', ['table' => $table]) }}" class="btn btn-warning btn-sm">Editar</a>
-                                <form action="{{ route('table.delete', ['table' => $table]) }}" method="POST" style="display: inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                                </form>
-                            </td>
+                            <th>Nombre de la Tabla</th>
+                            <th>Acciones</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            <!-- Añadir la paginación -->
-            <div class="d-flex justify-content-center">
-                {{ $tables->links('vendor.pagination.bootstrap-4') }}
-            </div>
+                    </thead>
+                    <tbody>
+                        @foreach ($tables as $table)
+                            <tr>
+                                <td>{{ ucfirst(str_replace('_', ' ', $table)) }}</td>
+                                <td>
+                                    <a href="{{ route('table.view', ['table' => $table]) }}" class="btn btn-info btn-sm">Ver</a>
+                                    <a href="{{ route('table.edit', ['table' => $table]) }}" class="btn btn-warning btn-sm">Editar</a>
+                                    <form action="{{ route('table.delete', ['table' => $table]) }}" method="POST" style="display: inline-block;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                <!-- Añadir la paginación -->
+                <div class="d-flex justify-content-center">
+                    {{ $tables->links('vendor.pagination.bootstrap-4') }}
+                </div>
+            @endif
+        </div>
+        <div class="card-footer text-end">
+            <a href="{{ route('menu.index') }}" class="btn btn-secondary">Volver al Menú</a>
         </div>
     </div>
 </div>
