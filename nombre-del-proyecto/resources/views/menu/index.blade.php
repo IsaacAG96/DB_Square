@@ -51,7 +51,7 @@
                     <a href="{{ route('profile.show') }}" class="profile-button">
                         <img src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://via.placeholder.com/50' }}" alt="Perfil">
                     </a>
-                    @endauth
+                @endauth
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="btn btn-danger mt-2">Cerrar sesión</button>
@@ -67,7 +67,7 @@
                     <a href="{{ url('/menu/gestionar') }}" class="list-group-item list-group-item-action">
                         Gestionar tablas
                     </a>
-                    <a href="{{ url('/menu/crear') }}" class="list-group-item list-group-item-action">
+                    <a href="#" class="list-group-item list-group-item-action disabled">
                         Crear una tabla
                     </a>
                     <a href="{{ url('/menu/importar') }}" class="list-group-item list-group-item-action">
@@ -80,4 +80,3 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

@@ -32,12 +32,13 @@ Route::get('/', function () {
     return redirect()->route('login');
 })->middleware('guest');
 
+// Redirigir a la página de menú si está autenticado
+Route::get('/dashboard', function () {
+    return redirect()->route('menu.index');
+})->middleware('auth');
+
 // Rutas para usuarios autenticados
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
     Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
     Route::get('/menu/crear', [MenuController::class, 'crear'])->name('menu.crear');
     Route::get('/menu/gestionar', [MenuController::class, 'gestionar'])->name('menu.gestionar');
@@ -49,7 +50,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         return redirect('/user/profile');
     })->name('profile.show');
 
-    // Añadir rutas para editar y eliminar tablas
+    // Añadir rutas para ver, editar y eliminar tablas
     Route::get('/table/view/{table}', [MenuController::class, 'viewTable'])->name('table.view');
     Route::get('/table/edit/{table}', [MenuController::class, 'editTable'])->name('table.edit');
     Route::delete('/table/delete/{table}', [MenuController::class, 'deleteTable'])->name('table.delete');
@@ -57,4 +58,3 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
 // Ruta de logout para usuarios autenticados
 Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-
