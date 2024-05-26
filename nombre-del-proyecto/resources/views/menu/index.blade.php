@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú de Opciones</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         .header-content {
             display: flex;
@@ -32,11 +33,20 @@
             color: #555;
             margin-top: 5px;
         }
+        .home-icon {
+            font-size: 2em;
+            color: #000;
+        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
         <div class="header-content mb-3">
+            <div>
+                <a href="{{ url('/inicio') }}" class="home-icon">
+                    <i class="fas fa-home"></i>
+                </a>
+            </div>
             <div>
                 @auth
                     @if ($showWelcomeMessage)
