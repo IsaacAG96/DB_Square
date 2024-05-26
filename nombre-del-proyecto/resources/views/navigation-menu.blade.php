@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ route('inicio') }}">
                         <x-application-mark class="block h-9 w-auto" />
                     </a>
                     <p class="font-bold text-sky-950 ml-4">DB SQUARE</p>

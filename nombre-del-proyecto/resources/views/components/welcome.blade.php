@@ -9,9 +9,15 @@
         </p>
     </div>
     <div class="flex items-center justify-center md:justify-center">
+        @guest
         <a href="{{ route('register') }}" class="bg-indigo-600 text-white font-bold py-4 px-16 rounded-lg text-xl hover:bg-indigo-700 transition duration-300">
             Registrarse
         </a>
+        @else
+        <a href="{{ route('menu.index') }}" class="bg-indigo-600 text-white font-bold py-4 px-16 rounded-lg text-xl hover:bg-indigo-700 transition duration-300">
+            Ir a Menu
+        </a>
+        @endguest
     </div>
 </div>
 
