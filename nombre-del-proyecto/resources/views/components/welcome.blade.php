@@ -1,96 +1,251 @@
-<div class="p-6 lg:p-8 bg-white border-b border-gray-200">
-    <x-application-logo class="block h-12 w-auto" />
-
-    <h1 class="mt-8 text-2xl font-medium text-gray-900">
-        Welcome to your Jetstream application!
-    </h1>
-
-    <p class="mt-6 text-gray-500 leading-relaxed">
-        Laravel Jetstream provides a beautiful, robust starting point for your next Laravel application. Laravel is designed
-        to help you build your application using a development environment that is simple, powerful, and enjoyable. We believe
-        you should love expressing your creativity through programming, so we have spent time carefully crafting the Laravel
-        ecosystem to be a breath of fresh air. We hope you love it.
-    </p>
+<div class="p-6 lg:p-8 bg-white border-b border-gray-200 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+        <x-application-logo class="block h-24 w-auto" />
+        <h1 class="mt-8 text-2xl font-medium text-gray-900">
+            ¡Bienvenido a DB SQUARE!
+        </h1>
+        <p class="mt-6 text-gray-500 leading-relaxed">
+            Tu solución integral para la creación y gestión de tablas.
+        </p>
+    </div>
+    <div class="flex items-center justify-center md:justify-center">
+        <a href="{{ route('register') }}" class="bg-indigo-600 text-white font-bold py-4 px-16 rounded-lg text-xl hover:bg-indigo-700 transition duration-300">
+            Registrarse
+        </a>
+    </div>
 </div>
 
 <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 p-6 lg:p-8">
     <div>
         <div class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="w-6 h-6 stroke-gray-400">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-            </svg>
+            <img src="{{ asset('images/crear.png') }}" alt="Icono de Creación de Tablas" class="w-6 h-6">
             <h2 class="ms-3 text-xl font-semibold text-gray-900">
-                <a href="https://laravel.com/docs">Documentation</a>
+                Creación de Tablas Simplificada
             </h2>
         </div>
 
         <p class="mt-4 text-gray-500 text-sm leading-relaxed">
-            Laravel has wonderful documentation covering every aspect of the framework. Whether you're new to the framework or have previous experience, we recommend reading all of the documentation from beginning to end.
+            Crea tablas de manera rápida y sencilla con nuestra intuitiva interfaz. Define nombres de columnas, tipos de datos, claves primarias y más con solo unos clics, permitiéndote estructurar tus datos de forma eficiente.
         </p>
 
         <p class="mt-4 text-sm">
-            <a href="https://laravel.com/docs" class="inline-flex items-center font-semibold text-indigo-700">
-                Explore the documentation
+            <button onclick="openModal('modal-crear')" class="inline-flex items-center font-semibold text-indigo-700">
+                Mostrar más
 
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="ms-1 w-5 h-5 fill-indigo-500">
                     <path fill-rule="evenodd" d="M5 10a.75.75 0 01.75-.75h6.638L10.23 7.29a.75.75 0 111.04-1.08l3.5 3.25a.75.75 0 010 1.08l-3.5 3.25a.75.75 0 11-1.04-1.08l2.158-1.96H5.75A.75.75 0 015 10z" clip-rule="evenodd" />
                 </svg>
-            </a>
+            </button>
         </p>
     </div>
 
     <div>
         <div class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="w-6 h-6 stroke-gray-400">
-                <path stroke-linecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
-            </svg>
+            <img src="{{ asset('images/editar.png') }}" alt="Icono de Creación de Tablas" class="w-6 h-6">
             <h2 class="ms-3 text-xl font-semibold text-gray-900">
-                <a href="https://laracasts.com">Laracasts</a>
+                Gestión Integral de Tablas
             </h2>
         </div>
 
         <p class="mt-4 text-gray-500 text-sm leading-relaxed">
-            Laracasts offers thousands of video tutorials on Laravel, PHP, and JavaScript development. Check them out, see for yourself, and massively level up your development skills in the process.
+            Gestiona tus tablas con total control y flexibilidad. Realiza operaciones CRUD (Crear, Leer, Actualizar, Eliminar) de forma eficiente y mantén la integridad de tus datos con nuestras herramientas avanzadas de gestión.
         </p>
 
         <p class="mt-4 text-sm">
-            <a href="https://laracasts.com" class="inline-flex items-center font-semibold text-indigo-700">
-                Start watching Laracasts
+            <button onclick="openModal('modal-gestionar')" class="inline-flex items-center font-semibold text-indigo-700">
+                Mostrar más
 
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="ms-1 w-5 h-5 fill-indigo-500">
                     <path fill-rule="evenodd" d="M5 10a.75.75 0 01.75-.75h6.638L10.23 7.29a.75.75 0 111.04-1.08l3.5 3.25a.75.75 0 010 1.08l-3.5 3.25a.75.75 0 11-1.04-1.08l2.158-1.96H5.75A.75.75 0 015 10z" clip-rule="evenodd" />
                 </svg>
-            </a>
+            </button>
         </p>
     </div>
 
     <div>
         <div class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="w-6 h-6 stroke-gray-400">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-            </svg>
+            <img src="{{ asset('images/guardar.png') }}" alt="Icono de Creación de Tablas" class="w-6 h-6">
             <h2 class="ms-3 text-xl font-semibold text-gray-900">
-                <a href="https://tailwindcss.com/">Tailwind</a>
+                Sincronización en Tiempo Real
             </h2>
         </div>
 
         <p class="mt-4 text-gray-500 text-sm leading-relaxed">
-            Laravel Jetstream is built with Tailwind, an amazing utility first CSS framework that doesn't get in your way. You'll be amazed how easily you can build and maintain fresh, modern designs with this wonderful framework at your fingertips.
+            Mantén todos tus datos actualizados en tiempo real. Nuestra tecnología de sincronización asegura que cualquier cambio realizado se refleje instantáneamente en todos tus dispositivos, permitiéndote trabajar sin interrupciones.
+        </p>
+
+        <p class="mt-4 text-sm">
+            <button onclick="openModal('modal-sincronizar')" class="inline-flex items-center font-semibold text-indigo-700">
+                Mostrar más
+
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="ms-1 w-5 h-5 fill-indigo-500">
+                    <path fill-rule="evenodd" d="M5 10a.75.75 0 01.75-.75h6.638L10.23 7.29a.75.75 0 111.04-1.08l3.5 3.25a.75.75 0 010 1.08l-3.5 3.25a.75.75 0 11-1.04-1.08l2.158-1.96H5.75A.75.75 0 015 10z" clip-rule="evenodd" />
+                </svg>
+            </button>
         </p>
     </div>
 
     <div>
         <div class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="w-6 h-6 stroke-gray-400">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-            </svg>
+            <img src="{{ asset('images/compartir.png') }}" alt="Icono de Creación de Tablas" class="w-6 h-6">
             <h2 class="ms-3 text-xl font-semibold text-gray-900">
-                Authentication
+                Compartir Archivos de Forma Segura
             </h2>
         </div>
 
         <p class="mt-4 text-gray-500 text-sm leading-relaxed">
-            Authentication and registration views are included with Laravel Jetstream, as well as support for user email verification and resetting forgotten passwords. So, you're free to get started with what matters most: building your application.
+            Comparte tus archivos y tablas de manera segura y eficiente. Controla quién puede ver o editar tus datos con opciones avanzadas de permisos y enlaces protegidos, facilitando la colaboración sin comprometer la seguridad.
+        </p>
+
+        <p class="mt-4 text-sm">
+            <button onclick="openModal('modal-compartir')" class="inline-flex items-center font-semibold text-indigo-700">
+                Mostrar más
+
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="ms-1 w-5 h-5 fill-indigo-500">
+                    <path fill-rule="evenodd" d="M5 10a.75.75 0 01.75-.75h6.638L10.23 7.29a.75.75 0 111.04-1.08l3.5 3.25a.75.75 0 010 1.08l-3.5 3.25a.75.75 0 11-1.04-1.08l2.158-1.96H5.75A.75.75 0 015 10z" clip-rule="evenodd" />
+                </svg>
+            </button>
         </p>
     </div>
 </div>
+
+<!--Modal Creacion de Tablas-->
+<div id="modal-crear" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <img src="{{ asset('images/crear.png') }}" alt="Icono de Creación de Tablas" class="h-6 w-6">
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Creación de Tablas Simplificada</h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                Nuestra interfaz intuitiva te permite crear tablas rápidamente. Define nombres de columnas, tipos de datos, claves primarias y más con solo unos clics. Optimiza tu flujo de trabajo y estructura tus datos de manera eficiente con nuestras herramientas avanzadas.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal('modal-crear')">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Modal Gestion de Tablas-->
+<div id="modal-gestionar" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <img src="{{ asset('images/editar.png') }}" alt="Icono de Creación de Tablas" class="h-6 w-6">
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Gestión Integral de Tablas</h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                Gestiona tus tablas con total control y flexibilidad. Realiza operaciones CRUD (Crear, Leer, Actualizar, Eliminar) de forma eficiente y mantén la integridad de tus datos con nuestras herramientas avanzadas de gestión.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal('modal-gestionar')">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal Sincronizar-->
+<div id="modal-sincronizar" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <img src="{{ asset('images/guardar.png') }}" alt="Icono de Creación de Tablas" class="h-6 w-6">
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Sincronización en Tiempo Real</h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                Mantén todos tus datos actualizados en tiempo real. Nuestra tecnología de sincronización asegura que cualquier cambio realizado se refleje instantáneamente en todos tus dispositivos, permitiéndote trabajar sin interrupciones.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal('modal-sincronizar')">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Modal Compartir de Tablas-->
+<div id="modal-compartir" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <img src="{{ asset('images/compartir.png') }}" alt="Icono de Creación de Tablas" class="h-6 w-6">
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Compartir Archivos de Forma Segura</h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                Comparte tus archivos y tablas de manera segura y eficiente. Controla quién puede ver o editar tus datos con opciones avanzadas de permisos y enlaces protegidos, facilitando la colaboración sin comprometer la seguridad.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal('modal-compartir')">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+    }
+</script>
