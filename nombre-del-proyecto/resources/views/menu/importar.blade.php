@@ -1,120 +1,61 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Importar Tablas</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        .table th, .table td {
-            vertical-align: middle;
-        }
-        .table th {
-            background-color: #f8f9fa;
-        }
-        .check-icon {
-            font-size: 1.5em;
-            color: green;
-        }
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .profile-section {
-            text-align: right;
-        }
-        .profile-section img {
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-        }
-        .profile-button {
-            background: none;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-        }
-        .home-icon {
-            font-size: 2em;
-            color: #000;
-            margin-right: 20px;
-        }
-    </style>
-</head>
-<body>
-<div class="container mt-5">
-    <div class="header-content mb-3">
-        <div>
-            <a href="{{ url('/inicio') }}" class="home-icon">
-                <i class="fas fa-home"></i>
-            </a>
-        </div>
-        <h3>Importar Tablas</h3>
-        <div class="profile-section">
-            @auth
-                <a href="{{ route('profile.show') }}" class="profile-button">
-                    <img src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://via.placeholder.com/50' }}" alt="Perfil">
-                </a>
-            @endauth
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-danger mt-2">Cerrar sesión</button>
-            </form>
+<x-app-layout>
+    <div class="flex flex-col min-h-screen">
+        <div class="container mt-5 flex-grow">
+            <div class="bg-white shadow-md rounded-lg p-6 lg:p-8 mx-auto w-full max-w-7xl">
+                <div class="mb-4">
+                    <h3 class="text-2xl font-semibold text-gray-900">Importar Tablas</h3>
+                </div>
+                <div class="card-body">
+                    @if (session('success'))
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                        {{ session('success') }}
+                    </div>
+                    @endif
+                    @if (session('error'))
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        {{ session('error') }}
+                    </div>
+                    @endif
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tabla</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campos</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach ($tables as $table => $columns)
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase">{{ ucfirst(str_replace('_', ' ', $table)) }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ implode(', ', array_map('ucfirst', array_map('str_replace', array_fill(0, count($columns), '_'), array_fill(0, count($columns), ' '), $columns))) }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                                        @if ($importedTables[$table])
+                                        <span class="text-green-500 font-bold">&#10003;</span>
+                                        @else
+                                        <form method="POST" action="{{ route('menu.importTable') }}" class="inline-block">
+                                            @csrf
+                                            <input type="hidden" name="table" value="{{ $table }}">
+                                            <button type="submit" class="bg-indigo-500 text-white font-bold py-2 px-4 rounded hover:bg-indigo-700 transition duration-150">Importar</button>
+                                        </form>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="mt-4 text-left">
+                    {{ $tables->links('vendor.pagination.bootstrap-4') }}
+                </div>
+                <div class="mt-6 text-right">
+                    <a href="{{ route('menu.index') }}" class="items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-800 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition ease-in-out duration-150">
+                        Volver al Menú
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header">
-            <h3>Tablas Disponibles</h3>
-        </div>
-        <div class="card-body">
-            @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger">
-                    {{ session('error') }}
-                </div>
-            @endif
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Tabla</th>
-                        <th>Campos</th>
-                        <th class="text-end">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($tables as $table => $columns)
-                        <tr>
-                            <td><strong>{{ ucfirst(str_replace('_', ' ', $table)) }}</strong></td>
-                            <td>{{ implode(', ', array_map('ucfirst', array_map('str_replace', array_fill(0, count($columns), '_'), array_fill(0, count($columns), ' '), $columns))) }}</td>
-                            <td class="text-end">
-                                @if ($importedTables[$table])
-                                    <span class="check-icon">&#10003;</span>
-                                @else
-                                    <form method="POST" action="{{ route('menu.importTable') }}">
-                                        @csrf
-                                        <input type="hidden" name="table" value="{{ $table }}">
-                                        <button type="submit" class="btn btn-primary btn-sm">Importar</button>
-                                    </form>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="card-footer text-end">
-            {{ $tables->links('vendor.pagination.bootstrap-4') }}
-            <a href="{{ route('menu.index') }}" class="btn btn-secondary">Volver al Menú</a>
-        </div>
-    </div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+</x-app-layout>
