@@ -18,10 +18,13 @@
         @livewireStyles
     </head>
     <body>
+        <x-banner />
         <div class="font-sans text-gray-900 antialiased">
+            @livewire('navigation-menu')
             {{ $slot }}
         </div>
 
         @livewireScripts
+        <x-footer />
     </body>
 </html>
