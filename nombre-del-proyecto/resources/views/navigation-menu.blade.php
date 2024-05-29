@@ -56,6 +56,9 @@
                                 <x-dropdown-link href="{{ route('admin.settings') }}">
                                     {{ __('Settings') }}
                                 </x-dropdown-link>
+                                <x-dropdown-link href="{{ route('profile.show') }}">
+                                    {{ __('Profile') }}
+                                </x-dropdown-link>
                                 <div class="border-t border-gray-200"></div>
                             @else
                                 <!-- Account Management -->

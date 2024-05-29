@@ -41,7 +41,7 @@
     <div>
         <div class="flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="ms-1 w-5 h-5">
-            <path fill="#d3d3d3" d="m12,12h4.242l6.879-6.879c1.17-1.17,1.17-3.072,0-4.242s-3.072-1.17-4.242,0l-6.879,6.879v4.242Zm2-3.414l6.293-6.293c.391-.391,1.023-.391,1.414,0s.39,1.024,0,1.414l-6.293,6.293h-1.414v-1.414Zm6,8.414v-5.93l-2,2v3.93h-8v3.5c0,.827-.673,1.5-1.5,1.5s-1.5-.673-1.5-1.5V3.5c0-.539-.133-1.044-.351-1.5h8.281L16.89.039c-.13-.015-.257-.039-.39-.039H3.5C1.57,0,0,1.57,0,3.5v3.5h5v13.5c0,1.93,1.57,3.5,3.5,3.5h12c1.93,0,3.5-1.57,3.5-3.5v-3.5h-4ZM5,5h-3v-1.5c0-.827.673-1.5,1.5-1.5s1.5.673,1.5,1.5v1.5Zm17,15.5c0,.827-.673,1.5-1.5,1.5h-8.838c.217-.455.338-.964.338-1.5v-1.5h10v1.5Z"/>
+                <path fill="#d3d3d3" d="m12,12h4.242l6.879-6.879c1.17-1.17,1.17-3.072,0-4.242s-3.072-1.17-4.242,0l-6.879,6.879v4.242Zm2-3.414l6.293-6.293c.391-.391,1.023-.391,1.414,0s.39,1.024,0,1.414l-6.293,6.293h-1.414v-1.414Zm6,8.414v-5.93l-2,2v3.93h-8v3.5c0,.827-.673,1.5-1.5,1.5s-1.5-.673-1.5-1.5V3.5c0-.539-.133-1.044-.351-1.5h8.281L16.89.039c-.13-.015-.257-.039-.39-.039H3.5C1.57,0,0,1.57,0,3.5v3.5h5v13.5c0,1.93,1.57,3.5,3.5,3.5h12c1.93,0,3.5-1.57,3.5-3.5v-3.5h-4ZM5,5h-3v-1.5c0-.827.673-1.5,1.5-1.5s1.5.673,1.5,1.5v1.5Zm17,15.5c0,.827-.673,1.5-1.5,1.5h-8.838c.217-.455.338-.964.338-1.5v-1.5h10v1.5Z" />
             </svg>
             <h2 class="ms-3 text-xl font-semibold text-gray-900">
                 Gestión de Contenidos
@@ -62,7 +62,7 @@
             </button>
         </p>
     </div>
-   
+
 </div>
 
 <!-- Modal Templates -->
@@ -75,7 +75,9 @@
             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div class="sm:flex sm:items-start">
                     <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
-                        <img src="{{ asset('images/actividad.png') }}" alt="Icono de Resumen de Actividad" class="h-6 w-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="ms-1 w-5 h-5 fill-indigo-500">
+                            <path fill="#d3d3d3" d="m4 22a2.982 2.982 0 0 1 -2.122-.879l-1.544-1.374a1 1 0 0 1 1.332-1.494l1.585 1.414a1 1 0 0 0 1.456.04l3.6-3.431a1 1 0 1 1 1.378 1.448l-3.585 3.414a2.964 2.964 0 0 1 -2.1.862zm19-1h-10a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2zm-19-7a2.982 2.982 0 0 1 -2.122-.879l-1.585-1.585a1 1 0 0 1 1.414-1.414l1.586 1.585a1.023 1.023 0 0 0 1.414 0l3.6-3.431a1 1 0 1 1 1.382 1.448l-3.589 3.414a2.964 2.964 0 0 1 -2.1.862zm19-1h-10a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2zm-19-7a2.982 2.982 0 0 1 -2.122-.879l-1.544-1.374a1 1 0 0 1 1.332-1.494l1.585 1.414a1 1 0 0 0 1.456.04l3.604-3.431a1 1 0 0 1 1.378 1.448l-3.589 3.414a2.964 2.964 0 0 1 -2.1.862zm19-1h-10a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2z" />
+                        </svg>
                     </div>
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                         <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Resumen de la Actividad</h3>
@@ -105,7 +107,9 @@
             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div class="sm:flex sm:items-start">
                     <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
-                        <img src="{{ asset('images/contenidos.png') }}" alt="Icono de Gestión de Contenidos" class="h-6 w-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="ms-1 w-5 h-5">
+                            <path fill="#d3d3d3" d="m12,12h4.242l6.879-6.879c1.17-1.17,1.17-3.072,0-4.242s-3.072-1.17-4.242,0l-6.879,6.879v4.242Zm2-3.414l6.293-6.293c.391-.391,1.023-.391,1.414,0s.39,1.024,0,1.414l-6.293,6.293h-1.414v-1.414Zm6,8.414v-5.93l-2,2v3.93h-8v3.5c0,.827-.673,1.5-1.5,1.5s-1.5-.673-1.5-1.5V3.5c0-.539-.133-1.044-.351-1.5h8.281L16.89.039c-.13-.015-.257-.039-.39-.039H3.5C1.57,0,0,1.57,0,3.5v3.5h5v13.5c0,1.93,1.57,3.5,3.5,3.5h12c1.93,0,3.5-1.57,3.5-3.5v-3.5h-4ZM5,5h-3v-1.5c0-.827.673-1.5,1.5-1.5s1.5.673,1.5,1.5v1.5Zm17,15.5c0,.827-.673,1.5-1.5,1.5h-8.838c.217-.455.338-.964.338-1.5v-1.5h10v1.5Z" />
+                        </svg>
                     </div>
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                         <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Gestión de Contenidos</h3>
