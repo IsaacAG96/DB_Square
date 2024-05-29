@@ -28,6 +28,9 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <a href="{{ route('table.view', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-indigo-200 text-indigo-600 hover:bg-indigo-300 transition duration-150 rounded-md">Ver</a>
                                         <a href="{{ route('table.edit', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-yellow-200 text-yellow-600 hover:bg-yellow-300 transition duration-150 rounded-md ml-4">Editar</a>
+                                        <a href="{{ route('table.share', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-green-200 text-green-600 hover:bg-green-300 transition duration-150 rounded-md ml-4">
+                                            <i class="fas fa-share"></i> Compartir
+                                        </a>
                                         <form action="{{ route('table.delete', ['table' => $table]) }}" method="POST" style="display: inline-block;">
                                             @csrf
                                             @method('DELETE')
@@ -54,3 +57,6 @@
         </div>
     </div>
 </x-app-layout>
+
+<!-- Añadir el script para Font Awesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
