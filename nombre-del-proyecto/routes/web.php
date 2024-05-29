@@ -1,11 +1,8 @@
 <?php
 
-// routes/web.php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\TableController;
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -15,18 +12,16 @@ use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\AdminController;
 
 // Rutas de autenticación generadas manualmente
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('register', [RegisteredUserController::class, 'store']);
-
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
-
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
-
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
     Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.update');
 });
@@ -46,18 +41,19 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
-
     Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
     Route::get('/menu/crear', [MenuController::class, 'crear'])->name('menu.crear');
     Route::get('/menu/gestionar', [MenuController::class, 'gestionar'])->name('menu.gestionar');
     Route::get('/menu/importar', [MenuController::class, 'importar'])->name('menu.importar');
     Route::post('/menu/importar', [MenuController::class, 'importTable'])->name('menu.importTable');
-
+    
     // Rutas relacionadas con TableController
     Route::get('/table/view/{table}', [TableController::class, 'view'])->name('table.view');
     Route::get('/table/edit/{table}', [TableController::class, 'edit'])->name('table.edit');
     Route::delete('/table/delete/{table}', [TableController::class, 'delete'])->name('table.delete');
     Route::get('/table/share/{table}', [TableController::class, 'share'])->name('table.share');
+    Route::post('/table/share/{table}', [TableController::class, 'processShare'])->name('table.processShare');
+    Route::delete('/table/share/delete/{id}', [TableController::class, 'deleteSharedAccess'])->name('table.deleteSharedAccess');
 });
 
 // Rutas de administración
@@ -68,5 +64,5 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
 
 // Redirigir a dashboard si intenta acceder a una página no permitida
 Route::fallback(function () {
-    return redirect()->route('inicio');
+    return redirect()->route('dashboard');
 });
