@@ -24,8 +24,7 @@ class CreateColeccionViajesTable extends Migration
             $table->decimal('gastos', 10, 2)->check('gastos >= 0');
             $table->timestamp('fecha_creacion')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('ultima_modificacion')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
-            $table->integer('permiso_visualizar');
-            $table->integer('id_propietario');
+             $table->integer('id_propietario');
         });
     }
 

@@ -24,7 +24,6 @@ class CreateListaCompraTable extends Migration
             $table->string('tienda', 100)->nullable();
             $table->timestamp('fecha_creacion')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('ultima_modificacion')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
-            $table->integer('permiso_visualizar');
             $table->integer('id_propietario');
         });
     }

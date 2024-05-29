@@ -22,7 +22,6 @@ class CreateListaCuentasTable extends Migration
             $table->string('correo_electronico', 255);
             $table->timestamp('fecha_creacion')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('ultima_modificacion')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
-            $table->integer('permiso_visualizar');
             $table->integer('id_propietario');
         });
     }

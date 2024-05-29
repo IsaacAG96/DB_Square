@@ -28,6 +28,7 @@ return new class extends Migration
             $table->boolean('compra')->default(false);
             $table->boolean('programas')->default(false);
             $table->boolean('cuentas')->default(false);
+            $table->boolean('is_admin')->default(false);
         });
     }
 
