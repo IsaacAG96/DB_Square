@@ -34,7 +34,7 @@ class MenuController extends Controller
             'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring', 'users'
         ];
 
-        $excludedFields = ['id', 'fecha_creacion', 'ultima_modificacion', 'permiso_visualizar', 'id_propietario'];
+        $excludedFields = ['id', 'fecha_creacion', 'ultima_modificacion', 'id_propietario'];
 
         $tables = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
 
@@ -79,62 +79,69 @@ class MenuController extends Controller
 
     public function gestionar()
     {
-        $user = auth()->user();
+        $userId = auth()->user()->id;
 
-        // Definir las tablas y sus campos correspondientes en la tabla users
-        $tableMappings = [
-            'coleccion_discos' => 'discos',
-            'agenda_contactos' => 'contactos',
-            'coleccion_viajes' => 'viajes',
-            'lista_compra' => 'compra',
-            'lista_programas' => 'programas',
-            'lista_cuentas' => 'cuentas',
-        ];
+        // Obtener todas las tablas de la base de datos
+        $tables = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
 
-        // Filtrar las tablas que el usuario puede ver
-        $tables = collect(array_keys($tableMappings))->filter(function ($table) use ($user, $tableMappings) {
-            return $user->{$tableMappings[$table]};
-        });
+        $tableData = [];
 
-        // Paginar las tablas, 10 por página
+        foreach ($tables as $table) {
+            // Verificar si la tabla tiene el campo id_propietario
+            if (Schema::hasColumn($table, 'id_propietario')) {
+                // Contar registros donde id_propietario es igual al ID del usuario
+                $count = DB::table($table)->where('id_propietario', $userId)->count();
+
+                // Buscar en la tabla compartir para las tablas compartidas con el usuario
+                $sharedCount = DB::table('compartir')
+                    ->where('usuario_compartido', $userId)
+                    ->where('tipo_tabla', $table)
+                    ->count();
+
+                // Sumar los registros propios y compartidos
+                $totalCount = $count + $sharedCount;
+
+                if ($totalCount > 0) {
+                    $tableData[$table] = $totalCount;
+                }
+            }
+        }
+
+        // Convertir la colección a una instancia de LengthAwarePaginator
+        $currentPage = Paginator::resolveCurrentPage();
         $perPage = 10;
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $currentPageItems = $tables->slice(($currentPage - 1) * $perPage, $perPage)->all();
-
-        $paginatedTables = new LengthAwarePaginator(
-            $currentPageItems,
-            $tables->count(),
-            $perPage,
-            $currentPage,
-            ['path' => LengthAwarePaginator::resolveCurrentPath()]
-        );
-
-        return view('menu.gestionar', [
-            'tables' => $paginatedTables,
+        $currentPageItems = array_slice($tableData, ($currentPage - 1) * $perPage, $perPage);
+        $paginatedTables = new LengthAwarePaginator($currentPageItems, count($tableData), $perPage, $currentPage, [
+            'path' => Paginator::resolveCurrentPath()
         ]);
+
+        return view('menu.gestionar', ['tables' => $paginatedTables]);
     }
+
     public function gestionarTablas()
     {
         $userId = auth()->user()->id;
-        $user = auth()->user();
 
         $tables = collect([
-            'coleccion_discos' => $user->discos,
-            'agenda_contactos' => $user->contactos,
-            'coleccion_viajes' => $user->viajes,
-            'lista_compra' => $user->compra,
-            'lista_programas' => $user->programas,
-            'lista_cuentas' => $user->cuentas,
-        ])->filter(function ($value) {
-            return $value;
-        });
+            'coleccion_discos' => auth()->user()->discos,
+            'agenda_contactos' => auth()->user()->contactos,
+            'coleccion_viajes' => auth()->user()->viajes,
+            'lista_compra' => auth()->user()->compra,
+            'lista_programas' => auth()->user()->programas,
+            'lista_cuentas' => auth()->user()->cuentas,
+        ])->filter();
 
         $tableData = $tables->mapWithKeys(function ($enabled, $table) use ($userId) {
             $count = DB::table($table)
                 ->where('id_propietario', $userId)
-                ->orWhere('permiso_visualizar', $userId)
                 ->count();
-            return [$table => $count];
+
+            $sharedCount = DB::table('compartir')
+                ->where('usuario_compartido', $userId)
+                ->where('tipo_tabla', $table)
+                ->count();
+
+            return [$table => $count + $sharedCount];
         });
 
         // Convertir la colección a una instancia de LengthAwarePaginator
@@ -147,17 +154,20 @@ class MenuController extends Controller
 
         return view('menu.gestionar', ['tables' => $paginatedTables]);
     }
+
     public function editTable($table)
     {
         // Lógica para editar la tabla
         // Devuelve una vista con un formulario de edición para la tabla específica
         return view('menu.edit', compact('table'));
     }
+
     public function deleteTable($table)
     {
-        \Schema::dropIfExists($table);
+        Schema::dropIfExists($table);
         return redirect()->route('menu.gestionar')->with('success', 'Tabla eliminada con éxito');
     }
+
     public function viewTable($table)
     {
         // Verificar si la tabla existe
@@ -173,8 +183,6 @@ class MenuController extends Controller
             'data' => $data
         ]);
     }
-
-
 
     public function importTable(Request $request)
     {

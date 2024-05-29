@@ -75,5 +75,6 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'auth.custom' => \App\Http\Middleware\RedirectIfUnauthenticated::class,
+        'is_admin' => \App\Http\Middleware\IsAdmin::class,
     ];
 }
