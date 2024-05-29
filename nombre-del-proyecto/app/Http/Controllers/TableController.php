@@ -1,25 +1,69 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-use App\Models\User;
-
 
 class TableController extends Controller
 {
+    // Mostrar las tablas que tiene el usuario
+    public function gestionar()
+    {
+        $user = Auth::user();
+        $userId = $user->id;
+
+        // Definir los campos booleanos y sus tablas correspondientes
+        $tables = [
+            'coleccion_discos' => 'discos',
+            'coleccion_viajes' => 'viajes',
+            'agenda_contactos' => 'contactos',
+            'lista_compra' => 'compra',
+            'lista_programas' => 'programas',
+            'lista_cuentas' => 'cuentas'
+        ];
+
+        // Filtrar tablas donde el campo booleano en users es true
+        $availableTables = [];
+        foreach ($tables as $table => $booleanField) {
+            if ($user->$booleanField) {
+                // Contar los registros propios
+                $ownCount = DB::table($table)->where('id_propietario', $userId)->count();
+                // Contar los registros compartidos
+                $sharedCount = DB::table('compartir')
+                    ->where('usuario_compartido', $userId)
+                    ->where('tipo_tabla', $table)
+                    ->where(function($query) {
+                        $query->where('visualizar', true)
+                              ->orWhere('editar', true);
+                    })
+                    ->count();
+                // Sumar los registros propios y compartidos
+                $totalCount = $ownCount + $sharedCount;
+                $availableTables[$table] = $totalCount;
+            }
+        }
+
+        // Paginar los resultados
+        $perPage = 10;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $currentPageItems = array_slice($availableTables, ($currentPage - 1) * $perPage, $perPage);
+        $paginatedTables = new LengthAwarePaginator($currentPageItems, count($availableTables), $perPage, $currentPage, [
+            'path' => Paginator::resolveCurrentPath()
+        ]);
+
+        return view('menu.gestionar', ['tables' => $paginatedTables]);
+    }
+
+    // Ver datos de la tabla
     public function view($table)
     {
         // Verificar si la tabla existe
-        if (!\Schema::hasTable($table)) {
-            return redirect()->route('menu.gestionar')->with('error', 'La tabla no existe.');
+        if (!Schema::hasTable($table)) {
+            return redirect()->route('table.gestionar')->with('error', 'La tabla no existe.');
         }
 
         // Obtener datos de la tabla
@@ -31,18 +75,40 @@ class TableController extends Controller
         ]);
     }
 
+    // Editar la tabla
     public function edit($table)
     {
-        // Lógica para editar la tabla
         return view('table.edit', compact('table'));
     }
 
-    public function delete($table)
+    // Eliminar la tabla y sus registros
+    public function deleteTable(Request $request, $table)
     {
-        \Schema::dropIfExists($table);
-        return redirect()->route('menu.gestionar')->with('success', 'Tabla eliminada con éxito');
+        $userId = Auth::user()->id;
+
+        // Eliminar todos los registros asociados al propietario
+        DB::table($table)->where('id_propietario', $userId)->delete();
+
+        // Determinar el campo booleano a actualizar
+        $booleanFields = [
+            'coleccion_discos' => 'discos',
+            'coleccion_viajes' => 'viajes',
+            'agenda_contactos' => 'contactos',
+            'lista_compra' => 'compra',
+            'lista_programas' => 'programas',
+            'lista_cuentas' => 'cuentas'
+        ];
+
+        // Actualizar el campo booleano correspondiente en la tabla users
+        if (array_key_exists($table, $booleanFields)) {
+            $fieldToUpdate = $booleanFields[$table];
+            DB::table('users')->where('id', $userId)->update([$fieldToUpdate => false]);
+        }
+
+        return redirect()->route('table.gestionar')->with('success', 'Tabla y registros eliminados correctamente.');
     }
 
+    // Compartir la tabla
     public function share($table)
     {
         // Obtener los datos compartidos
@@ -55,6 +121,7 @@ class TableController extends Controller
         return view('table.share', compact('table', 'sharedData'));
     }
 
+    // Procesar compartir la tabla
     public function processShare(Request $request, $table)
     {
         $userId = Auth::id();
@@ -75,11 +142,11 @@ class TableController extends Controller
             ->with('success', 'Tabla compartida correctamente.');
     }
 
+    // Eliminar acceso compartido
     public function deleteSharedAccess($id)
     {
         DB::table('compartir')->where('id', $id)->delete();
 
         return back()->with('success', 'Acceso compartido eliminado correctamente.');
     }
-
 }

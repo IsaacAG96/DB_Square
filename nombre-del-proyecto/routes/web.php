@@ -41,19 +41,22 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    // Rutas del menú
     Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
     Route::get('/menu/crear', [MenuController::class, 'crear'])->name('menu.crear');
     Route::get('/menu/gestionar', [MenuController::class, 'gestionar'])->name('menu.gestionar');
     Route::get('/menu/importar', [MenuController::class, 'importar'])->name('menu.importar');
     Route::post('/menu/importar', [MenuController::class, 'importTable'])->name('menu.importTable');
-    
+
     // Rutas relacionadas con TableController
-    Route::get('/table/view/{table}', [TableController::class, 'view'])->name('table.view');
-    Route::get('/table/edit/{table}', [TableController::class, 'edit'])->name('table.edit');
-    Route::delete('/table/delete/{table}', [TableController::class, 'delete'])->name('table.delete');
-    Route::get('/table/share/{table}', [TableController::class, 'share'])->name('table.share');
-    Route::post('/table/share/{table}', [TableController::class, 'processShare'])->name('table.processShare');
-    Route::delete('/table/share/delete/{id}', [TableController::class, 'deleteSharedAccess'])->name('table.deleteSharedAccess');
+    Route::get('/tables/gestionar', [TableController::class, 'gestionar'])->name('table.gestionar');
+    Route::get('/tables/view/{table}', [TableController::class, 'view'])->name('table.view');
+    Route::get('/tables/edit/{table}', [TableController::class, 'edit'])->name('table.edit');
+    Route::delete('/tables/delete/{table}', [TableController::class, 'deleteTable'])->name('table.delete');
+    Route::get('/tables/share/{table}', [TableController::class, 'share'])->name('table.share');
+    Route::post('/tables/share/{table}', [TableController::class, 'processShare'])->name('table.processShare');
+    Route::delete('/tables/shared-access/{id}', [TableController::class, 'deleteSharedAccess'])->name('table.deleteSharedAccess');
 });
 
 // Rutas de administración
@@ -66,3 +69,22 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
 Route::fallback(function () {
     return redirect()->route('dashboard');
 });
+
+
+Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
+    Route::get('/tables/gestionar', [TableController::class, 'gestionar'])->name('table.gestionar');
+    Route::get('/tables/view/{table}', [TableController::class, 'view'])->name('table.view');
+    Route::get('/tables/edit/{table}', [TableController::class, 'edit'])->name('table.edit');
+    Route::delete('/tables/delete/{table}', [TableController::class, 'deleteTable'])->name('table.delete');
+    Route::get('/tables/share/{table}', [TableController::class, 'share'])->name('table.share');
+    Route::post('/tables/share/{table}', [TableController::class, 'processShare'])->name('table.processShare');
+    Route::delete('/tables/shared-access/{id}', [TableController::class, 'deleteSharedAccess'])->name('table.deleteSharedAccess');
+});
+Route::delete('/table/{table}', [TableController::class, 'deleteTable'])->name('table.delete');
+Route::get('/gestionar', [TableController::class, 'gestionar'])->name('table.gestionar');
+Route::get('/table/{table}', [TableController::class, 'view'])->name('table.view');
+Route::get('/table/{table}/edit', [TableController::class, 'edit'])->name('table.edit');
+Route::delete('/table/{table}', [TableController::class, 'deleteTable'])->name('table.delete');
+Route::get('/table/{table}/share', [TableController::class, 'share'])->name('table.share');
+Route::post('/table/{table}/share', [TableController::class, 'processShare'])->name('table.processShare');
+Route::delete('/table/share/{id}', [TableController::class, 'deleteSharedAccess'])->name('table.deleteSharedAccess');

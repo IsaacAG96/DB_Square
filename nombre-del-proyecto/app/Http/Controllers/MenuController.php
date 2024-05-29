@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Schema;
@@ -8,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
 
 class MenuController extends Controller
@@ -31,7 +29,8 @@ class MenuController extends Controller
             'failed_jobs', 'migrations', 'model_has_permissions', 'model_has_roles',
             'password_reset_tokens', 'permissions', 'personal_access_tokens', 'roles',
             'role_has_permissions', 'sessions', 'teams', 'team_invitations', 'team_user',
-            'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring', 'users'
+            'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring', 'users',
+            'compartir'
         ];
 
         $excludedFields = ['id', 'fecha_creacion', 'ultima_modificacion', 'id_propietario'];
@@ -80,15 +79,21 @@ class MenuController extends Controller
     public function gestionar()
     {
         $userId = auth()->user()->id;
+        $user = auth()->user();
 
-        // Obtener todas las tablas de la base de datos
-        $tables = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
+        $tableMappings = [
+            'coleccion_discos' => 'discos',
+            'coleccion_viajes' => 'viajes',
+            'agenda_contactos' => 'contactos',
+            'lista_compra' => 'compra',
+            'lista_programas' => 'programas',
+            'lista_cuentas' => 'cuentas'
+        ];
 
         $tableData = [];
 
-        foreach ($tables as $table) {
-            // Verificar si la tabla tiene el campo id_propietario
-            if (Schema::hasColumn($table, 'id_propietario')) {
+        foreach ($tableMappings as $table => $field) {
+            if ($user->$field) {
                 // Contar registros donde id_propietario es igual al ID del usuario
                 $count = DB::table($table)->where('id_propietario', $userId)->count();
 
@@ -162,10 +167,17 @@ class MenuController extends Controller
         return view('menu.edit', compact('table'));
     }
 
-    public function deleteTable($table)
+    public function deleteTable(Request $request, $table)
     {
-        Schema::dropIfExists($table);
-        return redirect()->route('menu.gestionar')->with('success', 'Tabla eliminada con éxito');
+        $userId = Auth::user()->id;
+    
+        // Eliminar todos los registros asociados al propietario
+        DB::table($table)->where('id_propietario', $userId)->delete();
+    
+        // Cambiar el booleano de la tabla users
+        DB::table('users')->where('id', $userId)->update([$table => false]);
+    
+        return redirect()->route('menu.index')->with('success', 'Tabla y registros eliminados correctamente.');
     }
 
     public function viewTable($table)
