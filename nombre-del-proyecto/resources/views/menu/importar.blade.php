@@ -29,7 +29,7 @@
                                 @foreach ($tables as $table => $columns)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase">{{ ucfirst(str_replace('_', ' ', $table)) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ implode(', ', array_map('ucfirst', array_map('str_replace', array_fill(0, count($columns), '_'), array_fill(0, count($columns), ' '), $columns))) }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ implode(' | ', array_map('ucfirst', array_map('str_replace', array_fill(0, count($columns), '_'), array_fill(0, count($columns), ' '), $columns))) }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right">
                                         @if ($importedTables[$table])
                                         <span class="text-green-500 font-bold">&#10003;</span>

@@ -2,16 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
-use App\Http\Controllers\TableController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
-use App\Http\Controllers\Auth\ConfirmablePasswordController;
-use App\Http\Controllers\Auth\EmailVerificationNotificationController;
-use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\Auth\EmailVerificationPromptController;
-use App\Http\Controllers\Auth\LogoutController;
 
 // Rutas de autenticación generadas manualmente
 Route::middleware('guest')->group(function () {
@@ -40,6 +35,9 @@ Route::get('/inicio', function () {
 
 // Aplicar middleware de autenticación a todas las demás rutas
 Route::middleware(['auth.custom', 'auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
+
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');

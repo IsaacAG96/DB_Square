@@ -44,20 +44,33 @@
                         </x-slot>
 
                         <x-slot name="content">
-                            @if(Auth::check())
-                            <!-- Account Management -->
-                            <div class="block px-4 py-2 text-xs text-gray-400">
-                                {{ __('Manage Account') }}
-                            </div>
-
-                            <x-dropdown-link href="{{ route('profile.show') }}">
-                                {{ __('Perfil') }}
-                            </x-dropdown-link>
-
-                            @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
-                            <x-dropdown-link href="{{ route('api-tokens.index') }}">
-                                {{ __('API Tokens') }}
-                            </x-dropdown-link>
+                        @if(Auth::check())
+                            @if(Auth::user()->is_admin)
+                                <!-- Admin Management -->
+                                <div class="block px-4 py-2 text-xs text-gray-400">
+                                    {{ __('Admin Management') }}
+                                </div>
+                                <x-dropdown-link href="{{ route('admin.dashboard') }}">
+                                    {{ __('Admin Dashboard') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link href="{{ route('admin.settings') }}">
+                                    {{ __('Settings') }}
+                                </x-dropdown-link>
+                                <div class="border-t border-gray-200"></div>
+                            @else
+                                <!-- Account Management -->
+                                <div class="block px-4 py-2 text-xs text-gray-400">
+                                    {{ __('Manage Account') }}
+                                </div>
+                                <x-dropdown-link href="{{ route('profile.show') }}">
+                                    {{ __('Profile') }}
+                                </x-dropdown-link>
+                                @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
+                                <x-dropdown-link href="{{ route('api-tokens.index') }}">
+                                    {{ __('API Tokens') }}
+                                </x-dropdown-link>
+                                @endif
+                                <div class="border-t border-gray-200"></div>
                             @endif
 
                             <div class="border-t border-gray-200"></div>

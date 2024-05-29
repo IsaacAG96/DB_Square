@@ -26,127 +26,127 @@ class MenuController extends Controller
     }
 
     public function importar()
-{
-    $excludedTables = [
-        'failed_jobs', 'migrations', 'model_has_permissions', 'model_has_roles',
-        'password_reset_tokens', 'permissions', 'personal_access_tokens', 'roles',
-        'role_has_permissions', 'sessions', 'teams', 'team_invitations', 'team_user',
-        'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring', 'users'
-    ];
+    {
+        $excludedTables = [
+            'failed_jobs', 'migrations', 'model_has_permissions', 'model_has_roles',
+            'password_reset_tokens', 'permissions', 'personal_access_tokens', 'roles',
+            'role_has_permissions', 'sessions', 'teams', 'team_invitations', 'team_user',
+            'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring', 'users'
+        ];
 
-    $excludedFields = ['id', 'fecha_creacion', 'ultima_modificacion', 'permiso_visualizar', 'id_propietario'];
+        $excludedFields = ['id', 'fecha_creacion', 'ultima_modificacion', 'permiso_visualizar', 'id_propietario'];
 
-    $tables = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
+        $tables = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
 
-    $filteredTables = [];
-    foreach ($tables as $table) {
-        if (!in_array($table, $excludedTables)) {
-            $columns = Schema::getColumnListing($table);
-            $filteredColumns = array_diff($columns, $excludedFields);
-            $filteredTables[$table] = $filteredColumns;
+        $filteredTables = [];
+        foreach ($tables as $table) {
+            if (!in_array($table, $excludedTables)) {
+                $columns = Schema::getColumnListing($table);
+                $filteredColumns = array_diff($columns, $excludedFields);
+                $filteredTables[$table] = $filteredColumns;
+            }
         }
+
+        // Paginar las tablas, 5 por página
+        $perPage = 5;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $currentPageItems = array_slice($filteredTables, ($currentPage - 1) * $perPage, $perPage);
+
+        $paginatedTables = new LengthAwarePaginator(
+            $currentPageItems,
+            count($filteredTables),
+            $perPage,
+            $currentPage,
+            ['path' => LengthAwarePaginator::resolveCurrentPath()]
+        );
+
+        $user = auth()->user();
+
+        $importedTables = [
+            'agenda_contactos' => $user->contactos,
+            'coleccion_discos' => $user->discos,
+            'coleccion_viajes' => $user->viajes,
+            'lista_compra' => $user->compra,
+            'lista_programas' => $user->programas,
+            'lista_cuentas' => $user->cuentas,
+        ];
+
+        return view('menu.importar', [
+            'tables' => $paginatedTables,
+            'importedTables' => $importedTables
+        ]);
     }
 
-    // Paginar las tablas, 5 por página
-    $perPage = 5;
-    $currentPage = LengthAwarePaginator::resolveCurrentPage();
-    $currentPageItems = array_slice($filteredTables, ($currentPage - 1) * $perPage, $perPage);
-
-    $paginatedTables = new LengthAwarePaginator(
-        $currentPageItems,
-        count($filteredTables),
-        $perPage,
-        $currentPage,
-        ['path' => LengthAwarePaginator::resolveCurrentPath()]
-    );
-
-    $user = auth()->user();
-
-    $importedTables = [
-        'agenda_contactos' => $user->contactos,
-        'coleccion_discos' => $user->discos,
-        'coleccion_viajes' => $user->viajes,
-        'lista_compra' => $user->compra,
-        'lista_programas' => $user->programas,
-        'lista_cuentas' => $user->cuentas,
-    ];
-
-    return view('menu.importar', [
-        'tables' => $paginatedTables,
-        'importedTables' => $importedTables
-    ]);
-}
-
     public function gestionar()
-{
-    $user = auth()->user();
+    {
+        $user = auth()->user();
 
-    // Definir las tablas y sus campos correspondientes en la tabla users
-    $tableMappings = [
-        'coleccion_discos' => 'discos',
-        'agenda_contactos' => 'contactos',
-        'coleccion_viajes' => 'viajes',
-        'lista_compra' => 'compra',
-        'lista_programas' => 'programas',
-        'lista_cuentas' => 'cuentas',
-    ];
+        // Definir las tablas y sus campos correspondientes en la tabla users
+        $tableMappings = [
+            'coleccion_discos' => 'discos',
+            'agenda_contactos' => 'contactos',
+            'coleccion_viajes' => 'viajes',
+            'lista_compra' => 'compra',
+            'lista_programas' => 'programas',
+            'lista_cuentas' => 'cuentas',
+        ];
 
-    // Filtrar las tablas que el usuario puede ver
-    $tables = collect(array_keys($tableMappings))->filter(function ($table) use ($user, $tableMappings) {
-        return $user->{$tableMappings[$table]};
-    });
+        // Filtrar las tablas que el usuario puede ver
+        $tables = collect(array_keys($tableMappings))->filter(function ($table) use ($user, $tableMappings) {
+            return $user->{$tableMappings[$table]};
+        });
 
-    // Paginar las tablas, 10 por página
-    $perPage = 10;
-    $currentPage = LengthAwarePaginator::resolveCurrentPage();
-    $currentPageItems = $tables->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        // Paginar las tablas, 10 por página
+        $perPage = 10;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $currentPageItems = $tables->slice(($currentPage - 1) * $perPage, $perPage)->all();
 
-    $paginatedTables = new LengthAwarePaginator(
-        $currentPageItems,
-        $tables->count(),
-        $perPage,
-        $currentPage,
-        ['path' => LengthAwarePaginator::resolveCurrentPath()]
-    );
+        $paginatedTables = new LengthAwarePaginator(
+            $currentPageItems,
+            $tables->count(),
+            $perPage,
+            $currentPage,
+            ['path' => LengthAwarePaginator::resolveCurrentPath()]
+        );
 
-    return view('menu.gestionar', [
-        'tables' => $paginatedTables,
-    ]);
-}
-public function gestionarTablas()
-{
-    $userId = auth()->user()->id;
-    $user = auth()->user();
+        return view('menu.gestionar', [
+            'tables' => $paginatedTables,
+        ]);
+    }
+    public function gestionarTablas()
+    {
+        $userId = auth()->user()->id;
+        $user = auth()->user();
 
-    $tables = collect([
-        'coleccion_discos' => $user->discos,
-        'agenda_contactos' => $user->contactos,
-        'coleccion_viajes' => $user->viajes,
-        'lista_compra' => $user->compra,
-        'lista_programas' => $user->programas,
-        'lista_cuentas' => $user->cuentas,
-    ])->filter(function ($value) {
-        return $value;
-    });
+        $tables = collect([
+            'coleccion_discos' => $user->discos,
+            'agenda_contactos' => $user->contactos,
+            'coleccion_viajes' => $user->viajes,
+            'lista_compra' => $user->compra,
+            'lista_programas' => $user->programas,
+            'lista_cuentas' => $user->cuentas,
+        ])->filter(function ($value) {
+            return $value;
+        });
 
-    $tableData = $tables->mapWithKeys(function ($enabled, $table) use ($userId) {
-        $count = DB::table($table)
-            ->where('id_propietario', $userId)
-            ->orWhere('permiso_visualizar', $userId)
-            ->count();
-        return [$table => $count];
-    });
+        $tableData = $tables->mapWithKeys(function ($enabled, $table) use ($userId) {
+            $count = DB::table($table)
+                ->where('id_propietario', $userId)
+                ->orWhere('permiso_visualizar', $userId)
+                ->count();
+            return [$table => $count];
+        });
 
-    // Convertir la colección a una instancia de LengthAwarePaginator
-    $currentPage = Paginator::resolveCurrentPage();
-    $perPage = 10;
-    $currentPageItems = $tableData->slice(($currentPage - 1) * $perPage, $perPage)->all();
-    $paginatedTables = new LengthAwarePaginator($currentPageItems, $tableData->count(), $perPage, $currentPage, [
-        'path' => Paginator::resolveCurrentPath()
-    ]);
+        // Convertir la colección a una instancia de LengthAwarePaginator
+        $currentPage = Paginator::resolveCurrentPage();
+        $perPage = 10;
+        $currentPageItems = $tableData->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $paginatedTables = new LengthAwarePaginator($currentPageItems, $tableData->count(), $perPage, $currentPage, [
+            'path' => Paginator::resolveCurrentPath()
+        ]);
 
-    return view('menu.gestionar', ['tables' => $paginatedTables]);
-}
+        return view('menu.gestionar', ['tables' => $paginatedTables]);
+    }
     public function editTable($table)
     {
         // Lógica para editar la tabla
@@ -164,23 +164,23 @@ public function gestionarTablas()
         if (!Schema::hasTable($table)) {
             return redirect()->route('menu.gestionar')->with('error', 'La tabla no existe.');
         }
-    
+
         // Obtener datos de la tabla
         $data = DB::table($table)->get();
-    
+
         return view('menu.view', [
             'table' => $table,
             'data' => $data
         ]);
     }
-    
+
 
 
     public function importTable(Request $request)
     {
         $user = Auth::user();
         $tableName = $request->input('table');
-        
+
         // Cambia el campo correspondiente a true
         switch ($tableName) {
             case 'agenda_contactos':
