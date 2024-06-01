@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +17,12 @@ class TableController extends Controller
         $user = Auth::user();
         $userId = $user->id;
 
-        // Definir los campos booleanos y sus tablas correspondientes
+        // Obtener los campos booleanos del usuario
+        $userTables = DB::table('users')->where('id', $userId)->first([
+            'discos', 'viajes', 'contactos', 'compra', 'programas', 'cuentas'
+        ]);
+
+        // Definir las tablas y sus campos booleanos correspondientes
         $tables = [
             'coleccion_discos' => 'discos',
             'coleccion_viajes' => 'viajes',
@@ -26,24 +32,11 @@ class TableController extends Controller
             'lista_cuentas' => 'cuentas'
         ];
 
-        // Filtrar tablas donde el campo booleano en users es true
+        // Filtrar las tablas basándose en los campos booleanos del usuario
         $availableTables = [];
         foreach ($tables as $table => $booleanField) {
-            if ($user->$booleanField) {
-                // Contar los registros propios
-                $ownCount = DB::table($table)->where('id_propietario', $userId)->count();
-                // Contar los registros compartidos
-                $sharedCount = DB::table('compartir')
-                    ->where('usuario_compartido', $userId)
-                    ->where('tipo_tabla', $table)
-                    ->where(function($query) {
-                        $query->where('visualizar', true)
-                              ->orWhere('editar', true);
-                    })
-                    ->count();
-                // Sumar los registros propios y compartidos
-                $totalCount = $ownCount + $sharedCount;
-                $availableTables[$table] = $totalCount;
+            if ($userTables->$booleanField) {
+                $availableTables[] = $table;
             }
         }
 
