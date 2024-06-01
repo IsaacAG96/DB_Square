@@ -72,18 +72,3 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
 Route::fallback(function () {
     return redirect()->route('dashboard');
 });
-
-// Ruta adicional para enviar el correo de recuperación de contraseña
-Route::post('/forgot-password', function (Request $request) {
-    $request->validate(['email' => 'required|email']);
-    $token = Str::random(60);
-    DB::table('password_reset_tokens')->insert([
-        'email' => $request->email,
-        'token' => $token,
-        'created_at' => now(),
-    ]);
-    Mail::to($request->email)->send(new RecuperarClave($token, $request->email));
-    return back()->with('status', 'Enlace de recuperación de contraseña enviado!');
-})->name('password.email');
-
-Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
