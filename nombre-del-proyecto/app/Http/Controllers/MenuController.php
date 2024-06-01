@@ -5,9 +5,9 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Pagination\Paginator;
 
 class MenuController extends Controller
 {
@@ -23,44 +23,44 @@ class MenuController extends Controller
         return view('menu.index', compact('showWelcomeMessage'));
     }
 
-    public function importar()
+    public function importar(Request $request)
     {
+        $tables = [];
         $excludedTables = [
             'failed_jobs', 'migrations', 'model_has_permissions', 'model_has_roles',
             'password_reset_tokens', 'permissions', 'personal_access_tokens', 'roles',
             'role_has_permissions', 'sessions', 'teams', 'team_invitations', 'team_user',
             'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring', 'users',
-            'compartir'
+            'compartir' // Excluir la tabla 'compartir'
         ];
+        $excludedFields = ['id', 'fecha_creacion', 'ultima_modificacion', 'permiso_visualizar', 'id_propietario'];
 
-        $excludedFields = ['id', 'fecha_creacion', 'ultima_modificacion', 'id_propietario'];
+        // Obtener todas las tablas
+        $allTables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
 
-        $tables = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
-
-        $filteredTables = [];
-        foreach ($tables as $table) {
-            if (!in_array($table, $excludedTables)) {
-                $columns = Schema::getColumnListing($table);
-                $filteredColumns = array_diff($columns, $excludedFields);
-                $filteredTables[$table] = $filteredColumns;
+        foreach ($allTables as $tableName) {
+            // Excluir tablas específicas
+            if (!in_array($tableName, $excludedTables)) {
+                if (Schema::hasTable($tableName)) {
+                    // Obtener columnas de la tabla
+                    $columns = Schema::getColumnListing($tableName);
+                    // Filtrar los campos excluidos
+                    $filteredColumns = array_diff($columns, $excludedFields);
+                    $tables[$tableName] = $filteredColumns;
+                }
             }
         }
 
-        // Paginar las tablas, 5 por página
+        // Paginación
         $perPage = 5;
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $currentPageItems = array_slice($filteredTables, ($currentPage - 1) * $perPage, $perPage);
+        $tableCollection = collect($tables);
+        $currentTables = $tableCollection->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $paginatedTables = new LengthAwarePaginator($currentTables, $tableCollection->count(), $perPage);
+        $paginatedTables->setPath($request->url());
 
-        $paginatedTables = new LengthAwarePaginator(
-            $currentPageItems,
-            count($filteredTables),
-            $perPage,
-            $currentPage,
-            ['path' => LengthAwarePaginator::resolveCurrentPath()]
-        );
-
-        $user = auth()->user();
-
+        // Obtener el usuario autenticado
+        $user = Auth::user();
         $importedTables = [
             'agenda_contactos' => $user->contactos,
             'coleccion_discos' => $user->discos,
@@ -70,18 +70,20 @@ class MenuController extends Controller
             'lista_cuentas' => $user->cuentas,
         ];
 
-        return view('menu.importar', [
-            'tables' => $paginatedTables,
-            'importedTables' => $importedTables
-        ]);
+        return view('menu.importar', ['tables' => $paginatedTables, 'importedTables' => $importedTables]);
     }
 
     public function gestionar()
     {
-        $userId = auth()->user()->id;
-        $user = auth()->user();
+        $user = Auth::user();
 
-        $tableMappings = [
+        // Obtener los campos booleanos del usuario
+        $userTables = DB::table('users')->where('id', $user->id)->first([
+            'discos', 'viajes', 'contactos', 'compra', 'programas', 'cuentas'
+        ]);
+
+        // Definir las tablas y sus campos booleanos correspondientes
+        $tables = [
             'coleccion_discos' => 'discos',
             'coleccion_viajes' => 'viajes',
             'agenda_contactos' => 'contactos',
@@ -90,70 +92,19 @@ class MenuController extends Controller
             'lista_cuentas' => 'cuentas'
         ];
 
-        $tableData = [];
-
-        foreach ($tableMappings as $table => $field) {
-            if ($user->$field) {
-                // Contar registros donde id_propietario es igual al ID del usuario
-                $count = DB::table($table)->where('id_propietario', $userId)->count();
-
-                // Buscar en la tabla compartir para las tablas compartidas con el usuario
-                $sharedCount = DB::table('compartir')
-                    ->where('usuario_compartido', $userId)
-                    ->where('tipo_tabla', $table)
-                    ->count();
-
-                // Sumar los registros propios y compartidos
-                $totalCount = $count + $sharedCount;
-
-                if ($totalCount > 0) {
-                    $tableData[$table] = $totalCount;
-                }
+        // Filtrar las tablas basándose en los campos booleanos del usuario
+        $availableTables = [];
+        foreach ($tables as $table => $booleanField) {
+            if ($userTables->$booleanField) {
+                $availableTables[$table] = $booleanField;
             }
         }
 
-        // Convertir la colección a una instancia de LengthAwarePaginator
-        $currentPage = Paginator::resolveCurrentPage();
+        // Paginar los resultados
         $perPage = 10;
-        $currentPageItems = array_slice($tableData, ($currentPage - 1) * $perPage, $perPage);
-        $paginatedTables = new LengthAwarePaginator($currentPageItems, count($tableData), $perPage, $currentPage, [
-            'path' => Paginator::resolveCurrentPath()
-        ]);
-
-        return view('menu.gestionar', ['tables' => $paginatedTables]);
-    }
-
-    public function gestionarTablas()
-    {
-        $userId = auth()->user()->id;
-
-        $tables = collect([
-            'coleccion_discos' => auth()->user()->discos,
-            'agenda_contactos' => auth()->user()->contactos,
-            'coleccion_viajes' => auth()->user()->viajes,
-            'lista_compra' => auth()->user()->compra,
-            'lista_programas' => auth()->user()->programas,
-            'lista_cuentas' => auth()->user()->cuentas,
-        ])->filter();
-
-        $tableData = $tables->mapWithKeys(function ($enabled, $table) use ($userId) {
-            $count = DB::table($table)
-                ->where('id_propietario', $userId)
-                ->count();
-
-            $sharedCount = DB::table('compartir')
-                ->where('usuario_compartido', $userId)
-                ->where('tipo_tabla', $table)
-                ->count();
-
-            return [$table => $count + $sharedCount];
-        });
-
-        // Convertir la colección a una instancia de LengthAwarePaginator
-        $currentPage = Paginator::resolveCurrentPage();
-        $perPage = 10;
-        $currentPageItems = $tableData->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $paginatedTables = new LengthAwarePaginator($currentPageItems, $tableData->count(), $perPage, $currentPage, [
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $currentPageItems = array_slice(array_keys($availableTables), ($currentPage - 1) * $perPage, $perPage);
+        $paginatedTables = new LengthAwarePaginator($currentPageItems, count($availableTables), $perPage, $currentPage, [
             'path' => Paginator::resolveCurrentPath()
         ]);
 
@@ -167,33 +118,10 @@ class MenuController extends Controller
         return view('menu.edit', compact('table'));
     }
 
-    public function deleteTable(Request $request, $table)
+    public function deleteTable($table)
     {
-        $userId = Auth::user()->id;
-    
-        // Eliminar todos los registros asociados al propietario
-        DB::table($table)->where('id_propietario', $userId)->delete();
-    
-        // Cambiar el booleano de la tabla users
-        DB::table('users')->where('id', $userId)->update([$table => false]);
-    
-        return redirect()->route('menu.index')->with('success', 'Tabla y registros eliminados correctamente.');
-    }
-
-    public function viewTable($table)
-    {
-        // Verificar si la tabla existe
-        if (!Schema::hasTable($table)) {
-            return redirect()->route('menu.gestionar')->with('error', 'La tabla no existe.');
-        }
-
-        // Obtener datos de la tabla
-        $data = DB::table($table)->get();
-
-        return view('menu.view', [
-            'table' => $table,
-            'data' => $data
-        ]);
+        \Schema::dropIfExists($table);
+        return redirect()->route('menu.gestionar')->with('success', 'Tabla eliminada con éxito');
     }
 
     public function importTable(Request $request)
