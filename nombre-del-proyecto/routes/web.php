@@ -7,12 +7,10 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
-use App\Http\Controllers\Auth\ConfirmablePasswordController;
-use App\Http\Controllers\Auth\EmailVerificationNotificationController;
-use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\Auth\EmailVerificationPromptController;
-use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\AdminController;
+use App\Mail\RecuperarClave;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Request;
 
 // Rutas de autenticación generadas manualmente
 Route::middleware('guest')->group(function () {
@@ -88,3 +86,17 @@ Route::delete('/table/{table}', [TableController::class, 'deleteTable'])->name('
 Route::get('/table/{table}/share', [TableController::class, 'share'])->name('table.share');
 Route::post('/table/{table}/share', [TableController::class, 'processShare'])->name('table.processShare');
 Route::delete('/table/share/{id}', [TableController::class, 'deleteSharedAccess'])->name('table.deleteSharedAccess');
+
+Route::post('/forgot-password', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+    $token = Str::random(60);
+    DB::table('password_reset_tokens')->insert([
+        'email' => $request->email,
+        'token' => $token,
+        'created_at' => now(),
+    ]);
+    Mail::to($request->email)->send(new RecuperarClave($token, $request->email));
+    return back()->with('status', 'Enlace de recuperación de contraseña enviado!');
+})->name('password.email');
+
+Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
