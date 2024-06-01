@@ -1,4 +1,3 @@
-<!-- resources/views/table/view.blade.php -->
 <x-app-layout>
     <div class="container mt-5">
         <div class="bg-white shadow-md rounded-lg p-6 mx-auto w-full max-w-7xl">
@@ -26,7 +25,13 @@
                                 <tr>
                                     @foreach ($row as $key => $value)
                                         @if ($key != 'id')
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $value }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                @if ($key == 'id_propietario')
+                                                    {{ $owners[$value] }}#{{ $value }}
+                                                @else
+                                                    {{ $value }}
+                                                @endif
+                                            </td>
                                         @endif
                                     @endforeach
                                 </tr>
