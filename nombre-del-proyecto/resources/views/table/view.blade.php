@@ -15,7 +15,20 @@
                             <tr>
                                 @foreach (array_keys((array) $data->first()) as $column)
                                     @if ($column != 'id')
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $column == 'id_propietario' ? 'Propietario' : $column }}</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {{ $column == 'id_propietario' ? 'Propietario' : $column }}
+                                            <a href="{{ route('table.view', ['table' => $table, 'sort_field' => $column, 'sort_order' => ($sortField == $column && $sortOrder == 'asc') ? 'desc' : 'asc']) }}">
+                                                @if ($sortField == $column)
+                                                    @if ($sortOrder == 'asc')
+                                                        ↑
+                                                    @else
+                                                        ↓
+                                                    @endif
+                                                @else
+                                                    ↑↓
+                                                @endif
+                                            </a>
+                                        </th>
                                     @endif
                                 @endforeach
                             </tr>

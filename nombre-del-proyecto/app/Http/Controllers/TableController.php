@@ -51,40 +51,46 @@ class TableController extends Controller
         return view('menu.gestionar', ['tables' => $paginatedTables]);
     }
 
-    public function view($table)
-    {
-        $userId = Auth::id();
-    
-        // Verificar si la tabla existe
-        if (!Schema::hasTable($table)) {
-            return redirect()->route('table.gestionar')->with('error', 'La tabla no existe.');
-        }
-    
-        // Obtener los IDs de propietarios con permisos compartidos
-        $sharedOwners = DB::table('compartir')
-            ->where('usuario_compartido', $userId)
-            ->where('tipo_tabla', $table)
-            ->pluck('propietario')
-            ->toArray();
-    
-        // Incluir el ID del usuario actual
-        $allowedOwners = array_merge([$userId], $sharedOwners);
-    
-        // Obtener datos de la tabla donde el id_propietario está en la lista de propietarios permitidos
-        $data = DB::table($table)
-            ->whereIn('id_propietario', $allowedOwners)
-            ->get();
-    
-        // Obtener los nombres de los propietarios
-        $ownerIds = $data->pluck('id_propietario')->unique()->toArray();
-        $owners = DB::table('users')->whereIn('id', $ownerIds)->pluck('name', 'id');
-    
-        return view('table.view', [
-            'table' => $table,
-            'data' => $data,
-            'owners' => $owners
-        ]);
+    public function view(Request $request, $table)
+{
+    $userId = Auth::id();
+    $sortField = $request->input('sort_field', 'id'); // Campo por defecto para ordenar
+    $sortOrder = $request->input('sort_order', 'asc'); // Orden por defecto
+
+    // Verificar si la tabla existe
+    if (!Schema::hasTable($table)) {
+        return redirect()->route('table.gestionar')->with('error', 'La tabla no existe.');
     }
+
+    // Obtener los IDs de propietarios con permisos compartidos
+    $sharedOwners = DB::table('compartir')
+        ->where('usuario_compartido', $userId)
+        ->where('tipo_tabla', $table)
+        ->pluck('propietario')
+        ->toArray();
+
+    // Incluir el ID del usuario actual
+    $allowedOwners = array_merge([$userId], $sharedOwners);
+
+    // Obtener datos de la tabla donde el id_propietario está en la lista de propietarios permitidos
+    $data = DB::table($table)
+        ->whereIn('id_propietario', $allowedOwners)
+        ->orderBy($sortField, $sortOrder)
+        ->get();
+
+    // Obtener los nombres de los propietarios
+    $ownerIds = $data->pluck('id_propietario')->unique()->toArray();
+    $owners = DB::table('users')->whereIn('id', $ownerIds)->pluck('name', 'id');
+
+    return view('table.view', [
+        'table' => $table,
+        'data' => $data,
+        'owners' => $owners,
+        'sortField' => $sortField,
+        'sortOrder' => $sortOrder
+    ]);
+}
+
     
     
 
