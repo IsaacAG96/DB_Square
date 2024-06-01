@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\TableController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -12,7 +13,6 @@ use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\AdminController;
 
 // Rutas de autenticación generadas manualmente
 Route::middleware('guest')->group(function () {
@@ -69,22 +69,3 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
 Route::fallback(function () {
     return redirect()->route('dashboard');
 });
-
-
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-    Route::get('/tables/gestionar', [TableController::class, 'gestionar'])->name('table.gestionar');
-    Route::get('/tables/view/{table}', [TableController::class, 'view'])->name('table.view');
-    Route::get('/tables/edit/{table}', [TableController::class, 'edit'])->name('table.edit');
-    Route::delete('/tables/delete/{table}', [TableController::class, 'deleteTable'])->name('table.delete');
-    Route::get('/tables/share/{table}', [TableController::class, 'share'])->name('table.share');
-    Route::post('/tables/share/{table}', [TableController::class, 'processShare'])->name('table.processShare');
-    Route::delete('/tables/shared-access/{id}', [TableController::class, 'deleteSharedAccess'])->name('table.deleteSharedAccess');
-});
-Route::delete('/table/{table}', [TableController::class, 'deleteTable'])->name('table.delete');
-Route::get('/gestionar', [TableController::class, 'gestionar'])->name('table.gestionar');
-Route::get('/table/{table}', [TableController::class, 'view'])->name('table.view');
-Route::get('/table/{table}/edit', [TableController::class, 'edit'])->name('table.edit');
-Route::delete('/table/{table}', [TableController::class, 'deleteTable'])->name('table.delete');
-Route::get('/table/{table}/share', [TableController::class, 'share'])->name('table.share');
-Route::post('/table/{table}/share', [TableController::class, 'processShare'])->name('table.processShare');
-Route::delete('/table/share/{id}', [TableController::class, 'deleteSharedAccess'])->name('table.deleteSharedAccess');
