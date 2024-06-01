@@ -15,7 +15,7 @@
             <p style="font-size: 16px; color: #AAAAAA;">Haz clic en el enlace de abajo para recuperar las credenciales de inicio de sesión de tu cuenta de DBSQUARE:</p>
         </div>
         <div style="text-align: center; margin: 20px 0;">
-            <a href="{{ url('password/reset/$token') }}" style="background-color: #5951D3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">RECUPERAR CLAVE</a>
+            <a href="{{ url('reset-password/{token}') }}" style="background-color: #5951D3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">RECUPERAR CLAVE</a>
         </div>
         <div style="text-align: center; font-size: 14px; color: #AAAAAA;">
             <p>Si no estás tratando de recuperar tus credenciales de inicio de sesión, ignora este correo electrónico. Es posible que otro usuario haya introducido su información de inicio de sesión de manera incorrecta.</p>
