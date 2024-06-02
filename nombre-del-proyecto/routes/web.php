@@ -60,6 +60,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/tables/share/{table}', [TableController::class, 'share'])->name('table.share');
     Route::post('/tables/share/{table}', [TableController::class, 'processShare'])->name('table.processShare');
     Route::delete('/tables/shared-access/{id}', [TableController::class, 'deleteSharedAccess'])->name('table.deleteSharedAccess');
+    Route::get('/table/{table}/export/csv', [TableController::class, 'exportCsv'])->name('table.export.csv');
+    Route::get('/table/{table}/export/excel', [TableController::class, 'exportExcel'])->name('table.export.excel');
 });
 
 // Rutas de administración
