@@ -72,3 +72,10 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
 Route::fallback(function () {
     return redirect()->route('dashboard');
 });
+
+
+
+
+Route::get('/table/edit/{table}', [TableController::class, 'edit'])->name('table.edit');
+Route::delete('/table/deleteRecord/{table}/{id}', [TableController::class, 'deleteRecord'])->name('table.deleteRecord');
+Route::put('/table/{table}/{id}', [TableController::class, 'update'])->name('table.update');
