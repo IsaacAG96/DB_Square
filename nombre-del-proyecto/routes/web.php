@@ -1,18 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MenuController;
-use App\Http\Controllers\TableController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\NewPasswordController;
-use App\Http\Controllers\Auth\ConfirmablePasswordController;
-use App\Http\Controllers\Auth\EmailVerificationNotificationController;
-use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\Auth\EmailVerificationPromptController;
-use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\{
+    MenuController,
+    TableController,
+    AdminController,
+    Auth\AuthenticatedSessionController,
+    Auth\RegisteredUserController,
+    Auth\PasswordResetLinkController,
+    Auth\NewPasswordController,
+    Auth\ConfirmablePasswordController,
+    Auth\EmailVerificationNotificationController,
+    Auth\VerifyEmailController,
+    Auth\EmailVerificationPromptController,
+    Auth\LogoutController
+};
 use App\Mail\RecuperarClave;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
@@ -62,6 +64,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::delete('/tables/shared-access/{id}', [TableController::class, 'deleteSharedAccess'])->name('table.deleteSharedAccess');
     Route::get('/table/{table}/export/csv', [TableController::class, 'exportCsv'])->name('table.export.csv');
     Route::get('/table/{table}/export/excel', [TableController::class, 'exportExcel'])->name('table.export.excel');
+
+    Route::get('/table/edit/{table}', [TableController::class, 'edit'])->name('table.edit');
+    Route::delete('/table/deleteRecord/{table}/{id}', [TableController::class, 'deleteRecord'])->name('table.deleteRecord');
+    Route::put('/table/{table}/{id}', [TableController::class, 'update'])->name('table.update');
+    Route::get('/table/{table}/create', [TableController::class, 'create'])->name('table.create');
+    Route::post('/table/{table}/store', [TableController::class, 'store'])->name('table.store');
 });
 
 // Rutas de administración
@@ -74,10 +82,3 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
 Route::fallback(function () {
     return redirect()->route('dashboard');
 });
-
-
-
-
-Route::get('/table/edit/{table}', [TableController::class, 'edit'])->name('table.edit');
-Route::delete('/table/deleteRecord/{table}/{id}', [TableController::class, 'deleteRecord'])->name('table.deleteRecord');
-Route::put('/table/{table}/{id}', [TableController::class, 'update'])->name('table.update');
