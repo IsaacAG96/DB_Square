@@ -1,8 +1,9 @@
 <x-app-layout>
     <div class="container mt-5">
         <div class="bg-white shadow-md rounded-lg p-6 mx-auto w-full max-w-7xl">
-            <div class="mb-4">
+            <div class="mb-4 flex justify-between items-center">
                 <h3 class="text-2xl font-semibold text-gray-900">Editar {{ str_replace('_', ' ', $table) }}</h3>
+                <a href="{{ route('table.create', ['table' => $table]) }}" class="px-4 py-2 bg-green-500 text-white rounded">Añadir datos</a>
             </div>
             @if (session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
@@ -88,9 +89,6 @@
                                 </tr>
                             @endforeach
                         </tbody>
-                        
-                        
-                        
                     </table>
                 </div>
             @endif
