@@ -2,7 +2,7 @@
     <div class="container mt-5">
         <div class="bg-white shadow-md rounded-lg p-6 mx-auto w-full max-w-7xl">
             <div class="mb-4">
-                <h3 class="text-2xl font-semibold text-gray-900">{{ str_replace('_', ' ', $table) }}</h3>
+                <h3 class="text-xl font-semibold text-gray-900 uppercase">{{ str_replace('_', ' ', $table) }}</h3>
             </div>
             @if ($data->isEmpty())
                 <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
@@ -20,17 +20,17 @@
                             @endif
                         @endforeach
                         <div class="flex items-end">
-                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Filtrar</button>
+                            <button type="submit" class="px-4 py-2 bg-indigo-500 text-white  hover:bg-indigo-700 transition duration-300 rounded">Filtrar</button>
                         </div>
                     </div>
-                </form>
+                </form><br>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                    <table class="min-w-full divide-y divide-gray-200 table-auto">
+                        <thead class="bg-gray-100">
                             <tr>
                                 @foreach (array_keys((array) $data->first()) as $column)
                                     @if ($column != 'id')
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                             {{ $column == 'id_propietario' ? 'Propietario' : $column }}
                                             <a href="{{ route('table.view', ['table' => $table, 'sort_field' => $column, 'sort_order' => ($sortField == $column && $sortOrder == 'asc') ? 'desc' : 'asc'] + request()->except(['sort_field', 'sort_order', 'page'])) }}">
                                                 @if ($sortField == $column)
@@ -49,11 +49,11 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($data as $row)
-                                <tr>
+                            @foreach ($data as $index => $row)
+                                <tr class="{{ $index % 2 == 0 ? 'bg-indigo-100' : '' }}">
                                     @foreach ($row as $key => $value)
                                         @if ($key != 'id')
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-900">
                                                 @if ($key == 'id_propietario')
                                                     {{ $owners[$value] }}#{{ $value }}
                                                 @else
