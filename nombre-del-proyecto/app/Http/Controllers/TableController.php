@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use App\Exports\TableExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Response;
 
 class TableController extends Controller
 {
@@ -178,5 +181,44 @@ class TableController extends Controller
         DB::table('compartir')->where('id', $id)->delete();
 
         return back()->with('success', 'Acceso compartido eliminado correctamente.');
+    }
+
+
+
+    //Metodos para exportar tablas
+    public function exportCsv($table)
+    {
+        $data = $this->getDataForTable($table); // Ajusta este método para obtener los datos de la tabla
+        $filename = $table . '.csv';
+
+        $handle = fopen('php://output', 'w');
+        ob_start();
+
+        // Agregar encabezados de las columnas
+        fputcsv($handle, array_keys((array) $data->first()));
+
+        // Agregar datos de las filas
+        foreach ($data as $row) {
+            fputcsv($handle, (array) $row);
+        }
+
+        fclose($handle);
+        $content = ob_get_clean();
+
+        return Response::make($content, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ]);
+    }
+
+    public function exportExcel($table)
+    {
+        return Excel::download(new TableExport($table), $table . '.xlsx');
+    }
+
+    private function getDataForTable($table)
+    {
+        // Implementa este método para obtener los datos de la tabla
+        return DB::table($table)->get();
     }
 }

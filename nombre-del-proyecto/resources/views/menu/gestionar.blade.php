@@ -7,43 +7,41 @@
                 </div>
                 <div class="card-body">
                     @if ($tables->isEmpty())
-                        <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
-                            No hay tablas disponibles para mostrar.
-                        </div>
+                    <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
+                        No hay tablas disponibles para mostrar.
+                    </div>
                     @else
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre de la Tabla</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach ($tables as $table)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-base uppercase">{{ str_replace('_', ' ', $table) }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap flex space-x-2">
-                                                <a href="{{ route('table.view', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-indigo-200 text-indigo-600 hover:bg-indigo-300 transition duration-150 rounded-md">Ver</a>
-                                                <a href="{{ route('table.edit', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-yellow-200 text-yellow-600 hover:bg-yellow-300 transition duration-150 rounded-md">Editar</a>
-                                                <a href="{{ route('table.share', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-green-200 text-green-600 hover:bg-green-300 transition duration-150 rounded-md">
-                                                    Compartir
-                                                </a>
-                                                <form action="{{ route('table.delete', ['table' => $table]) }}" method="POST" class="delete-form" style="display: inline-block;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-200 text-red-600 hover:bg-red-300 transition duration-150 rounded-md">Eliminar</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- Añadir la paginación -->
-                        <div class="mt-4">
-                            {{ $tables->links('vendor.pagination.bootstrap-4') }}
-                        </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre de la Tabla</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach ($tables as $table)
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-base uppercase">{{ str_replace('_', ' ', $table) }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap flex space-x-2">
+                                        <a href="{{ route('table.view', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-indigo-200 text-indigo-600 hover:bg-indigo-300 transition duration-150 rounded-md">Ver</a>
+                                        <a href="{{ route('table.edit', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-yellow-200 text-yellow-600 hover:bg-yellow-300 transition duration-150 rounded-md">Editar</a>
+                                        <a href="{{ route('table.share', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-green-200 text-green-600 hover:bg-green-300 transition duration-150 rounded-md">Compartir</a>
+                                        <form action="{{ route('table.delete', ['table' => $table]) }}" method="POST" class="delete-form" style="display: inline-block;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-200 text-red-600 hover:bg-red-300 transition duration-150 rounded-md">Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Añadir la paginación -->
+                    <div class="mt-4">
+                        {{ $tables->links('vendor.pagination.bootstrap-4') }}
+                    </div>
                     @endif
                 </div>
                 <div class="mt-4 text-right">
@@ -93,7 +91,7 @@
 
 <!-- Script de confirmación -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const deleteForms = document.querySelectorAll('.delete-form');
         const deleteModal = document.getElementById('delete-modal');
         const confirmDeleteButton = document.getElementById('confirm-delete');
@@ -101,18 +99,18 @@
         let formToSubmit;
 
         deleteForms.forEach(form => {
-            form.addEventListener('submit', function (e) {
+            form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 formToSubmit = form;
                 deleteModal.classList.remove('hidden');
             });
         });
 
-        confirmDeleteButton.addEventListener('click', function () {
+        confirmDeleteButton.addEventListener('click', function() {
             formToSubmit.submit();
         });
 
-        cancelDeleteButton.addEventListener('click', function () {
+        cancelDeleteButton.addEventListener('click', function() {
             deleteModal.classList.add('hidden');
         });
     });
