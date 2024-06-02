@@ -357,36 +357,75 @@ class TableController extends Controller
     
 
     public function store(Request $request, $table)
-    {
-        // Verificar si la tabla existe
-        if (!Schema::hasTable($table)) {
-            return redirect()->route('table.gestionar')->with('error', 'La tabla no existe.');
-        }
-    
-        // Obtener los nombres de las columnas de la tabla y sus propiedades
-        $columns = Schema::getColumnListing($table);
-        $validationRules = [];
-        
-        foreach ($columns as $column) {
-            if ($column != 'fecha_creacion' && $column != 'ultima_modificacion' && $column != 'id' && $column != 'id_propietario') {
-                $isNotNull = !Schema::getConnection()->getDoctrineColumn($table, $column)->getNotnull();
-                if (!$isNotNull) {
-                    $validationRules[$column] = 'required';
-                }
-            }
-        }
-    
-        // Validar los datos del formulario
-        $validatedData = $request->validate($validationRules);
-    
-        // Añadir el id_propietario al nuevo registro
-        $validatedData['id_propietario'] = Auth::id();
-    
-        // Insertar el nuevo registro en la tabla
-        DB::table($table)->insert($validatedData);
-    
-        return redirect()->route('table.edit', ['table' => $table])->with('success', 'Registro añadido correctamente.');
+{
+    // Verificar si la tabla existe
+    if (!Schema::hasTable($table)) {
+        return redirect()->route('table.gestionar')->with('error', 'La tabla no existe.');
     }
+
+    // Obtener la descripción de la tabla
+    $columns = Schema::getColumnListing($table);
+    $validationRules = [];
+    $validationMessages = [];
+
+    foreach ($columns as $column) {
+        // Omitir ciertas columnas
+        if (in_array($column, ['id', 'id_propietario', 'fecha_creacion', 'ultima_modificacion'])) {
+            continue;
+        }
+
+        // Obtener la definición de la columna
+        $columnType = Schema::getConnection()->getDoctrineColumn($table, $column);
+
+        // Construir reglas de validación
+        $rules = [];
+        if (!$columnType->getNotnull()) {
+            $rules[] = 'nullable';
+        } else {
+            $rules[] = 'required';
+            $validationMessages["{$column}.required"] = "El campo {$column} es obligatorio.";
+        }
+
+        switch ($columnType->getType()->getName()) {
+            case 'string':
+                $rules[] = 'string';
+                if ($columnType->getLength()) {
+                    $rules[] = 'max:' . $columnType->getLength();
+                    $validationMessages["{$column}.max"] = "El campo {$column} no debe exceder de {$columnType->getLength()} caracteres.";
+                }
+                break;
+            case 'integer':
+                $rules[] = 'integer';
+                break;
+            case 'float':
+            case 'decimal':
+                $rules[] = 'numeric';
+                break;
+            case 'boolean':
+                $rules[] = 'boolean';
+                break;
+            case 'date':
+            case 'datetime':
+                $rules[] = 'date';
+                break;
+            // Añadir más tipos según sea necesario
+        }
+
+        $validationRules[$column] = implode('|', $rules);
+    }
+
+    // Validar los datos del formulario
+    $validatedData = $request->validate($validationRules, $validationMessages);
+
+    // Añadir el id_propietario al nuevo registro
+    $validatedData['id_propietario'] = Auth::id();
+
+    // Insertar el nuevo registro en la tabla
+    DB::table($table)->insert($validatedData);
+
+    return redirect()->route('table.edit', ['table' => $table])->with('success', 'Registro añadido correctamente.');
+}
+
     
 
     
