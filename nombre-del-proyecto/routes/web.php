@@ -82,3 +82,5 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
 Route::fallback(function () {
     return redirect()->route('dashboard');
 });
+
+Route::delete('table/{table}/{id}', [TableController::class, 'deleteRecord'])->name('table.deleteRecord');

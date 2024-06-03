@@ -81,12 +81,14 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" colspan="2">
                                     <div class="flex space-x-4">
                                         <button type="submit" class="px-4 py-2 bg-blue-200 text-blue-600 hover:bg-blue-300 transition duration-150 rounded-md">Actualizar</button>
-                                        <form method="POST" action="{{ route('table.deleteRecord', ['table' => $table, 'id' => $row->id]) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este registro?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="px-4 py-2 bg-red-200 text-red-600 hover:bg-red-300 transition duration-150 rounded-md">Eliminar</button>
-                                        </form>
                                     </div>
+                                </td>
+                            </form>
+                            <form method="POST" action="{{ route('table.deleteRecord', ['table' => $table, 'id' => $row->id]) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este registro?');">
+                                @csrf
+                                @method('DELETE')
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" colspan="2">
+                                    <button type="submit" class="px-4 py-2 bg-red-200 text-red-600 hover:bg-red-300 transition duration-150 rounded-md">Eliminar</button>
                                 </td>
                             </form>
                         </tr>

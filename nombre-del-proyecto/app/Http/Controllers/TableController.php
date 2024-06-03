@@ -159,10 +159,10 @@ class TableController extends Controller
         if (!Schema::hasTable($table)) {
             return redirect()->route('table.gestionar')->with('error', 'La tabla no existe.');
         }
-
+    
         // Obtener el ID del usuario actual
         $userId = Auth::id();
-
+    
         // Verificar que el usuario tenga permisos para editar
         $allowedOwners = DB::table('compartir')
             ->where('usuario_compartido', $userId)
@@ -170,19 +170,19 @@ class TableController extends Controller
             ->where('editar', true)
             ->pluck('propietario')
             ->toArray();
-
+    
         $allowedOwners[] = $userId; // Incluir el ID del usuario actual
-
+    
         // Verificar que el registro pertenece a un propietario permitido
         $record = DB::table($table)->where('id', $id)->first();
-
+    
         if (!$record || !in_array($record->id_propietario, $allowedOwners)) {
             return redirect()->route('table.edit', ['table' => $table])->with('error', 'No tienes permiso para editar este registro.');
         }
-
-        // Validar los datos del formulario (exceptuando _token y _method)
-        $validatedData = $request->except('_token', '_method');
-
+    
+        // Validar los datos del formulario (exceptuando _token, _method y ULTIMA_MODIFICACION)
+        $validatedData = $request->except('_token', '_method', 'ULTIMA_MODIFICACION');
+    
         // Puedes añadir reglas de validación si es necesario
         $validatedData = $request->validate([
             'articulo' => 'required|string|max:255',
@@ -192,24 +192,25 @@ class TableController extends Controller
             'unidad_de_medida' => 'nullable|string|max:255',
             'tienda' => 'nullable|string|max:255',
             'fecha_creacion' => 'required|date',
-            'ultima_modificacion' => 'required|date',
+            // No necesitas validar 'ULTIMA_MODIFICACION' porque lo actualizarás manualmente
         ]);
-
+    
+        // Actualizar el campo ULTIMA_MODIFICACION con la fecha y hora actual en la zona horaria de Madrid
+        $validatedData['ultima_modificacion'] = now('Europe/Madrid');
+    
         // Actualizar los datos del registro específico
         $affected = DB::table($table)
             ->where('id', $id)
             ->update($validatedData);
-
+    
         if ($affected) {
             return redirect()->route('table.edit', ['table' => $table])->with('success', 'Datos actualizados correctamente.');
         } else {
             return redirect()->route('table.edit', ['table' => $table])->with('error', 'No se realizaron cambios.');
         }
     }
-
-
-
-
+    
+    
 
     public function deleteRecord(Request $request, $table, $id)
     {
@@ -223,7 +224,6 @@ class TableController extends Controller
 
         return redirect()->route('table.edit', ['table' => $table])->with('success', 'Registro eliminado correctamente.');
     }
-
 
     // Eliminar la tabla y sus registros
     public function deleteTable(Request $request, $table)
@@ -294,9 +294,7 @@ class TableController extends Controller
         return back()->with('success', 'Acceso compartido eliminado correctamente.');
     }
 
-
-
-    //Metodos para exportar tablas
+    // Métodos para exportar tablas
     public function exportCsv($table)
     {
         $data = $this->getDataForTable($table); // Ajusta este método para obtener los datos de la tabla
@@ -332,13 +330,14 @@ class TableController extends Controller
         // Implementa este método para obtener los datos de la tabla
         return DB::table($table)->get();
     }
+
     public function create($table)
     {
         // Verificar si la tabla existe
         if (!Schema::hasTable($table)) {
             return redirect()->route('table.gestionar')->with('error', 'La tabla no existe.');
         }
-    
+
         // Obtener los nombres de las columnas de la tabla y sus propiedades
         $columns = Schema::getColumnListing($table);
         $columnsInfo = [];
@@ -348,90 +347,80 @@ class TableController extends Controller
                 $columnsInfo[$column] = !Schema::getConnection()->getDoctrineColumn($table, $column)->getNotnull();
             }
         }
-    
+
         return view('table.create', [
             'table' => $table,
             'columnsInfo' => $columnsInfo
         ]);
     }
-    
 
     public function store(Request $request, $table)
-{
-    // Verificar si la tabla existe
-    if (!Schema::hasTable($table)) {
-        return redirect()->route('table.gestionar')->with('error', 'La tabla no existe.');
+    {
+        // Verificar si la tabla existe
+        if (!Schema::hasTable($table)) {
+            return redirect()->route('table.gestionar')->with('error', 'La tabla no existe.');
+        }
+
+        // Obtener la descripción de la tabla
+        $columns = Schema::getColumnListing($table);
+        $validationRules = [];
+        $validationMessages = [];
+
+        foreach ($columns as $column) {
+            // Omitir ciertas columnas
+            if (in_array($column, ['id', 'id_propietario', 'fecha_creacion', 'ultima_modificacion'])) {
+                continue;
+            }
+
+            // Obtener la definición de la columna
+            $columnType = Schema::getConnection()->getDoctrineColumn($table, $column);
+
+            // Construir reglas de validación
+            $rules = [];
+            if (!$columnType->getNotnull()) {
+                $rules[] = 'nullable';
+            } else {
+                $rules[] = 'required';
+                $validationMessages["{$column}.required"] = "El campo {$column} es obligatorio.";
+            }
+
+            switch ($columnType->getType()->getName()) {
+                case 'string':
+                    $rules[] = 'string';
+                    if ($columnType->getLength()) {
+                        $rules[] = 'max:' . $columnType->getLength();
+                        $validationMessages["{$column}.max"] = "El campo {$column} no debe exceder de {$columnType->getLength()} caracteres.";
+                    }
+                    break;
+                case 'integer':
+                    $rules[] = 'integer';
+                    break;
+                case 'float':
+                case 'decimal':
+                    $rules[] = 'numeric';
+                    break;
+                case 'boolean':
+                    $rules[] = 'boolean';
+                    break;
+                case 'date':
+                case 'datetime':
+                    $rules[] = 'date';
+                    break;
+                // Añadir más tipos según sea necesario
+            }
+
+            $validationRules[$column] = implode('|', $rules);
+        }
+
+        // Validar los datos del formulario
+        $validatedData = $request->validate($validationRules, $validationMessages);
+
+        // Añadir el id_propietario al nuevo registro
+        $validatedData['id_propietario'] = Auth::id();
+
+        // Insertar el nuevo registro en la tabla
+        DB::table($table)->insert($validatedData);
+
+        return redirect()->route('table.edit', ['table' => $table])->with('success', 'Registro añadido correctamente.');
     }
-
-    // Obtener la descripción de la tabla
-    $columns = Schema::getColumnListing($table);
-    $validationRules = [];
-    $validationMessages = [];
-
-    foreach ($columns as $column) {
-        // Omitir ciertas columnas
-        if (in_array($column, ['id', 'id_propietario', 'fecha_creacion', 'ultima_modificacion'])) {
-            continue;
-        }
-
-        // Obtener la definición de la columna
-        $columnType = Schema::getConnection()->getDoctrineColumn($table, $column);
-
-        // Construir reglas de validación
-        $rules = [];
-        if (!$columnType->getNotnull()) {
-            $rules[] = 'nullable';
-        } else {
-            $rules[] = 'required';
-            $validationMessages["{$column}.required"] = "El campo {$column} es obligatorio.";
-        }
-
-        switch ($columnType->getType()->getName()) {
-            case 'string':
-                $rules[] = 'string';
-                if ($columnType->getLength()) {
-                    $rules[] = 'max:' . $columnType->getLength();
-                    $validationMessages["{$column}.max"] = "El campo {$column} no debe exceder de {$columnType->getLength()} caracteres.";
-                }
-                break;
-            case 'integer':
-                $rules[] = 'integer';
-                break;
-            case 'float':
-            case 'decimal':
-                $rules[] = 'numeric';
-                break;
-            case 'boolean':
-                $rules[] = 'boolean';
-                break;
-            case 'date':
-            case 'datetime':
-                $rules[] = 'date';
-                break;
-            // Añadir más tipos según sea necesario
-        }
-
-        $validationRules[$column] = implode('|', $rules);
-    }
-
-    // Validar los datos del formulario
-    $validatedData = $request->validate($validationRules, $validationMessages);
-
-    // Añadir el id_propietario al nuevo registro
-    $validatedData['id_propietario'] = Auth::id();
-
-    // Insertar el nuevo registro en la tabla
-    DB::table($table)->insert($validatedData);
-
-    return redirect()->route('table.edit', ['table' => $table])->with('success', 'Registro añadido correctamente.');
-}
-
-    
-
-    
-
-    
-    
-
-    
 }
