@@ -68,7 +68,9 @@
                                 @if ($key != 'id')
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     @if ($key == 'id_propietario')
-                                    {{ $owners[$value] }}#{{ $value }}
+                                    <input type="text" name="{{ $key }}" value="{{ $owners[$value] }}#{{ $value }}" class="w-full px-2 py-1 border border-transparent rounded" readonly>
+                                    @elseif ($key == 'fecha_creacion' || $key == 'ultima_modificacion')
+                                    <input type="text" name="{{ $key }}" value="{{ $value }}" class="w-full px-2 py-1 border border-transparent rounded" readonly>
                                     @else
                                     <input type="text" name="{{ $key }}" value="{{ $value }}" class="input-adjust-width w-full px-2 py-1 border border-gray-300 rounded" oninput="adjustWidth(this)">
                                     @endif
@@ -101,7 +103,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Ajusta el ancho de los inputs según el contenido
             document.querySelectorAll('.input-adjust-width').forEach(function(input) {
                 adjustWidth(input);
