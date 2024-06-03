@@ -19,8 +19,9 @@
                     </div>
                     @endif
                     @endforeach
-                    <div class="flex items-end">
-                        <button type="submit" class="px-4 py-2 bg-indigo-500 text-white  hover:bg-indigo-700 transition duration-300 rounded">Filtrar</button>
+                    <div class="flex items-end space-x-2">
+                        <button type="submit" class="px-4 py-2 bg-indigo-500 text-white hover:bg-indigo-700 transition duration-300 rounded">Filtrar</button>
+                        <a href="{{ route('table.view', ['table' => $table]) }}" class="px-4 py-2 bg-gray-500 text-white hover:bg-gray-700 transition duration-300 rounded">Restablecer</a>
                     </div>
                 </div>
             </form><br>
