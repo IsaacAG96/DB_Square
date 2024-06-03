@@ -25,12 +25,12 @@
                 </div>
             </form><br>
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 table-auto">
+                <table class="min-w-full divide-y divide-gray-200 table-auto border">
                     <thead class="bg-gray-100">
                         <tr>
                             @foreach (array_keys((array) $data->first()) as $column)
                             @if ($column != 'id')
-                            <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                            <th scope="col" class="px-2 py-2 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
                                 {{ $column == 'id_propietario' ? 'Propietario' : $column }}
                                 <a href="{{ route('table.view', ['table' => $table, 'sort_field' => $column, 'sort_order' => ($sortField == $column && $sortOrder == 'asc') ? 'desc' : 'asc'] + request()->except(['sort_field', 'sort_order', 'page'])) }}">
                                     @if ($sortField == $column)
@@ -50,7 +50,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach ($data as $index => $row)
-                        <tr class="{{ $index % 2 == 0 ? 'bg-indigo-100' : '' }}">
+                        <tr class="{{ $index % 2 == 0 ? 'bg-indigo-100' : '' }} text-center">
                             @foreach ($row as $key => $value)
                             @if ($key != 'id')
                             <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-900">
