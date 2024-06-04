@@ -3,6 +3,28 @@
         <div class="flex justify-center">
             <div class="p-6 lg:p-8 grid grid-cols-1 gap-6 mt-6 w-full max-w-7xl">
                 <div class="bg-white shadow-md rounded-lg p-4 lg:p-10 mx-auto w-full">
+                    <!-- Migas de pan -->
+                    <nav class="mb-4 text-sm text-gray-700" aria-label="Breadcrumb">
+                        <ol class="list-none p-0 inline-flex">
+                            <li class="flex items-center">
+                                <a href="{{ route('inicio') }}" class="text-blue-500 hover:text-blue-700">Inicio</a>
+                                <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512">
+                                    <path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z"/>
+                                </svg>
+                            </li>
+                            <li class="flex items-center">
+                                <a href="{{ route('menu.index') }}" class="text-blue-500 hover:text-blue-700">Menú de Opciones</a>
+                                <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512">
+                                    <path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z"/>
+                                </svg>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-gray-700">Menú de Opciones</span>
+                            </li>
+                        </ol>
+                    </nav>
+                    <!-- Fin de migas de pan -->
+
                     <h3 class="text-2xl font-semibold text-gray-900 mb-4">Menú de Opciones</h3>
                     <a href="{{ url('/menu/gestionar') }}" class="block bg-gray-100 py-4 px-12 rounded hover:bg-indigo-400 transition duration-150 mb-4">
                         <div class="flex items-center">

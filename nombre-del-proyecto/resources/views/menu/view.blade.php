@@ -8,6 +8,16 @@
 </head>
 <body>
 <div class="container mt-5">
+    <!-- Migas de pan -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('menu.gestionar') }}">Gestionar Tablas</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Ver Tabla: {{ ucfirst(str_replace('_', ' ', $table)) }}</li>
+        </ol>
+    </nav>
+    <!-- Fin de migas de pan -->
+
     <h3>Ver Tabla: {{ ucfirst(str_replace('_', ' ', $table)) }}</h3>
     <div class="card">
         <div class="card-body">
