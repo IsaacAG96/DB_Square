@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="container mt-5">
+    <div class="container mt-5 mb-5">
         <div class="bg-white shadow-md rounded-lg p-6 mx-auto w-full max-w-7xl">
             <!-- Migas de pan -->
             <nav class="mb-4 text-sm text-gray-700" aria-label="Breadcrumb">
@@ -7,19 +7,19 @@
                     <li class="flex items-center">
                         <a href="{{ route('dashboard') }}" class="text-blue-500 hover:text-blue-700">Inicio</a>
                         <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512">
-                            <path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z"/>
+                            <path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z" />
                         </svg>
                     </li>
                     <li class="flex items-center">
                         <a href="{{ route('menu.index') }}" class="text-blue-500 hover:text-blue-700">Menú de Opciones</a>
                         <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512">
-                            <path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z"/>
+                            <path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z" />
                         </svg>
                     </li>
                     <li class="flex items-center">
                         <a href="{{ route('table.gestionar') }}" class="text-blue-500 hover:text-blue-700">Gestionar Tablas</a>
                         <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512">
-                            <path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z"/>
+                            <path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z" />
                         </svg>
                     </li>
                     <li class="flex items-center">
@@ -84,7 +84,15 @@
                             @if ($key != 'id')
                             <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-900">
                                 @if ($key == 'id_propietario')
-                                {{ $owners[$value] }}#{{ $value }}
+                                @php
+                                $owner = $owners[$value];
+                                @endphp
+                                <div class="flex items-center">
+                                    {{ $owner->name }}#{{ $value }}
+                                    @if ($owner->profile_photo_path)
+                                    <img src="{{ asset('storage/' . $owner->profile_photo_path) }}" alt="Profile Photo" class="ml-2 mr-1 w-10 h-10 rounded-full">
+                                    @endif
+                                </div>
                                 @else
                                 {{ $value }}
                                 @endif

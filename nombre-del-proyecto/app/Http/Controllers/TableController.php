@@ -93,7 +93,7 @@ class TableController extends Controller
 
         // Obtener los nombres de los propietarios
         $ownerIds = $data->pluck('id_propietario')->unique()->toArray();
-        $owners = DB::table('users')->whereIn('id', $ownerIds)->pluck('name', 'id');
+        $owners = DB::table('users')->whereIn('id', $ownerIds)->get(['id', 'name', 'profile_photo_path'])->keyBy('id');
 
         return view('table.view', [
             'table' => $table,
