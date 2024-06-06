@@ -296,20 +296,66 @@ class TableController extends Controller
     }
 
     // Métodos para exportar tablas
-    public function exportCsv($table)
+    public function exportCsv(Request $request, $table)
     {
-        $data = $this->getDataForTable($table); // Ajusta este método para obtener los datos de la tabla
-        $filename = $table . '.csv';
+        $userId = Auth::id();
+        $sortField = $request->input('sort_field', 'id');
+        $sortOrder = $request->input('sort_order', 'asc');
 
+        // Verificar si la tabla existe
+        if (!Schema::hasTable($table)) {
+            return redirect()->route('table.gestionar')->with('error', 'La tabla no existe.');
+        }
+
+        // Obtener los IDs de propietarios con permisos compartidos
+        $sharedOwners = DB::table('compartir')
+            ->where('usuario_compartido', $userId)
+            ->where('tipo_tabla', $table)
+            ->pluck('propietario')
+            ->toArray();
+
+        // Incluir el ID del usuario actual
+        $allowedOwners = array_merge([$userId], $sharedOwners);
+
+        // Obtener los filtros
+        $filters = $request->except(['sort_field', 'sort_order', 'page']);
+
+        // Obtener datos de la tabla donde el id_propietario está en la lista de propietarios permitidos y aplicar filtros
+        $query = DB::table($table)->whereIn('id_propietario', $allowedOwners);
+
+        foreach ($filters as $field => $value) {
+            if ($value) {
+                $query->where($field, 'like', "%{$value}%");
+            }
+        }
+
+        $data = $query->orderBy($sortField, $sortOrder)->get();
+
+        // Obtener los nombres de los propietarios
+        $ownerIds = $data->pluck('id_propietario')->unique()->toArray();
+        $owners = DB::table('users')->whereIn('id', $ownerIds)->pluck('name', 'id');
+
+        // Convertir los datos a un array
+        $dataArray = [];
+        foreach ($data as $row) {
+            $rowArray = (array) $row;
+            if (isset($rowArray['id_propietario'])) {
+                $rowArray['id_propietario'] = $owners[$rowArray['id_propietario']] . '#' . $rowArray['id_propietario'];
+            }
+            $dataArray[] = $rowArray;
+        }
+
+        // Crear el archivo CSV
+        $filename = $table . '.csv';
         $handle = fopen('php://output', 'w');
         ob_start();
 
         // Agregar encabezados de las columnas
-        fputcsv($handle, array_keys((array) $data->first()));
+        fputcsv($handle, array_keys($dataArray[0]));
 
         // Agregar datos de las filas
-        foreach ($data as $row) {
-            fputcsv($handle, (array) $row);
+        foreach ($dataArray as $row) {
+            fputcsv($handle, $row);
         }
 
         fclose($handle);
