@@ -84,3 +84,5 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
 Route::fallback(function () {
     return redirect()->route('dashboard');
 });
+
+Route::post('/table/{table}/send-email', [TableController::class, 'sendEmail'])->name('table.sendEmail');

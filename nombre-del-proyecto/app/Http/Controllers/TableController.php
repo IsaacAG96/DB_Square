@@ -12,6 +12,7 @@ use App\Exports\TableExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Response;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Illuminate\Support\Facades\Mail;
 
 class TableController extends Controller
 {
@@ -563,5 +564,48 @@ class TableController extends Controller
         ])->setPaper('a4', 'landscape'); // Configurar orientación horizontal
 
         return $pdf->download($table . '.pdf');
+    }
+    public function sendEmail(Request $request, $table)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'message' => 'nullable|string',
+        ]);
+
+        $userId = Auth::id();
+        $sortField = $request->input('sort_field', 'id');
+        $sortOrder = $request->input('sort_order', 'asc');
+
+        // Verificar si la tabla existe
+        if (!Schema::hasTable($table)) {
+            return redirect()->route('table.gestionar')->with('error', 'La tabla no existe.');
+        }
+
+        // Obtener los datos de la tabla aplicando los filtros
+        $filters = $request->except(['sort_field', 'sort_order', 'page']);
+        $query = DB::table($table)->where('id_propietario', $userId);
+
+        foreach ($filters as $field => $value) {
+            if ($value) {
+                $query->where($field, 'like', "%{$value}%");
+            }
+        }
+
+        $data = $query->orderBy($sortField, $sortOrder)->get();
+
+        // Crear el contenido del correo
+        $emailData = [
+            'table' => $table,
+            'data' => $data,
+            'message' => $request->input('message', '')
+        ];
+
+        // Enviar el correo
+        Mail::send('emails.shareTable', $emailData, function ($message) use ($request, $table) {
+            $message->to($request->input('email'))
+                ->subject('Compartir Tabla: ' . str_replace('_', ' ', $table));
+        });
+
+        return redirect()->route('table.share', ['table' => $table])->with('success', 'Correo enviado correctamente.');
     }
 }

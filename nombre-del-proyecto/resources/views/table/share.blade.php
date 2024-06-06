@@ -102,7 +102,10 @@
                         @endif
                     </div>
                 </div>
-                <div class="mt-4 text-right">
+                <div class="mt-4 flex justify-between">
+                    <button type="button" class="inline-flex items-center px-4 py-2 bg-blue-200 text-blue-600 hover:bg-blue-300 transition duration-150 rounded-md" onclick="document.getElementById('emailModal').classList.remove('hidden');">
+                        Compartir por Correo
+                    </button>
                     <a href="{{ route('table.gestionar') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition ease-in-out duration-150">
                         Volver
                     </a>
@@ -111,6 +114,45 @@
         </div>
     </div>
 </x-app-layout>
+
+<!-- Modal para compartir por correo -->
+<div id="emailModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12h2m4 0h2m-12 0h2m2-8h2m0 16h2M4 6h2m-2 4h2m-2 4h2m4-8h2m2 16h2" />
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Compartir por Correo</h3>
+                        <div class="mt-2">
+                            <form action="{{ route('table.sendEmail', ['table' => $table]) }}" method="POST">
+                                @csrf
+                                <div class="mb-4">
+                                    <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+                                    <input type="email" id="email" name="email" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="message" class="block text-sm font-medium text-gray-700">Mensaje</label>
+                                    <textarea id="message" name="message" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></textarea>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="button" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-600 hover:bg-gray-300 transition duration-150 rounded-md mr-2" onclick="document.getElementById('emailModal').classList.add('hidden');">Cancelar</button>
+                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-200 text-blue-600 hover:bg-blue-300 transition duration-150 rounded-md">Enviar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Añadir el script para Font Awesome -->
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
