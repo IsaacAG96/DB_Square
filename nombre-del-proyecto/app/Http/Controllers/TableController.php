@@ -11,6 +11,7 @@ use Illuminate\Pagination\Paginator;
 use App\Exports\TableExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Response;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class TableController extends Controller
 {
@@ -422,5 +423,55 @@ class TableController extends Controller
         DB::table($table)->insert($validatedData);
 
         return redirect()->route('table.edit', ['table' => $table])->with('success', 'Registro añadido correctamente.');
+    }
+    public function exportPdf(Request $request, $table)
+    {
+        $userId = Auth::id();
+        $sortField = $request->input('sort_field', 'id'); // Campo por defecto para ordenar
+        $sortOrder = $request->input('sort_order', 'asc'); // Orden por defecto
+
+        // Verificar si la tabla existe
+        if (!Schema::hasTable($table)) {
+            return redirect()->route('table.gestionar')->with('error', 'La tabla no existe.');
+        }
+
+        // Obtener los IDs de propietarios con permisos compartidos
+        $sharedOwners = DB::table('compartir')
+            ->where('usuario_compartido', $userId)
+            ->where('tipo_tabla', $table)
+            ->pluck('propietario')
+            ->toArray();
+
+        // Incluir el ID del usuario actual
+        $allowedOwners = array_merge([$userId], $sharedOwners);
+
+        // Obtener los filtros
+        $filters = $request->except(['sort_field', 'sort_order', 'page']);
+
+        // Obtener datos de la tabla donde el id_propietario está en la lista de propietarios permitidos y aplicar filtros
+        $query = DB::table($table)->whereIn('id_propietario', $allowedOwners);
+
+        foreach ($filters as $field => $value) {
+            if ($value) {
+                $query->where($field, 'like', "%{$value}%");
+            }
+        }
+
+        $data = $query->orderBy($sortField, $sortOrder)->get();
+
+        // Obtener los nombres de los propietarios
+        $ownerIds = $data->pluck('id_propietario')->unique()->toArray();
+        $owners = DB::table('users')->whereIn('id', $ownerIds)->pluck('name', 'id');
+
+        $pdf = PDF::loadView('pdf.table', [
+            'table' => $table,
+            'data' => $data,
+            'owners' => $owners,
+            'sortField' => $sortField,
+            'sortOrder' => $sortOrder,
+            'filters' => $filters
+        ])->setPaper('a4', 'landscape'); // Configurar orientación horizontal
+
+        return $pdf->download($table . '.pdf');
     }
 }

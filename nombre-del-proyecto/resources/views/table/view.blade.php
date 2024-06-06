@@ -98,11 +98,14 @@
             </div>
             @endif
             <div class="mt-4 text-left">
-                <a href="{{ route('table.export.excel', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-green-200 text-green-600 hover:bg-green-300 transition duration-150 rounded-md">
+                <a href="{{ route('table.export.excel', ['table' => $table] + request()->except(['page'])) }}" class="inline-flex items-center px-4 py-2 bg-green-200 text-green-600 hover:bg-green-300 transition duration-150 rounded-md">
                     Exportar Excel
                 </a>
-                <a href="{{ route('table.export.csv', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-yellow-200 text-yellow-600 hover:bg-yellow-300 transition duration-150 rounded-md">
+                <a href="{{ route('table.export.csv', ['table' => $table] + request()->except(['page'])) }}" class="inline-flex items-center px-4 py-2 bg-yellow-200 text-yellow-600 hover:bg-yellow-300 transition duration-150 rounded-md">
                     Exportar CSV
+                </a>
+                <a href="{{ route('table.export.pdf', ['table' => $table] + request()->except(['page'])) }}" class="inline-flex items-center px-4 py-2 bg-red-200 text-red-600 hover:bg-red-300 transition duration-150 rounded-md">
+                    Exportar PDF
                 </a>
             </div>
             <div class="mt-4 text-right">

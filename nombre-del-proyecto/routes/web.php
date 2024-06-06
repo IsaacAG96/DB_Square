@@ -84,3 +84,4 @@ Route::fallback(function () {
 });
 
 Route::delete('table/{table}/{id}', [TableController::class, 'deleteRecord'])->name('table.deleteRecord');
+Route::get('/table/{table}/export/pdf', [TableController::class, 'exportPdf'])->name('table.export.pdf');
