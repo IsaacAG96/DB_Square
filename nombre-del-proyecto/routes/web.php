@@ -9,15 +9,7 @@ use App\Http\Controllers\{
     Auth\RegisteredUserController,
     Auth\PasswordResetLinkController,
     Auth\NewPasswordController,
-    Auth\ConfirmablePasswordController,
-    Auth\EmailVerificationNotificationController,
-    Auth\VerifyEmailController,
-    Auth\EmailVerificationPromptController,
-    Auth\LogoutController
 };
-use App\Mail\RecuperarClave;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Http\Request;
 
 // Rutas de autenticación generadas manualmente
 Route::middleware('guest')->group(function () {
