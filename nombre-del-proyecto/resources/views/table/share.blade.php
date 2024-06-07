@@ -7,11 +7,15 @@
                     <ol class="list-none p-0 inline-flex">
                         <li class="flex items-center">
                             <a href="{{ route('table.gestionar') }}" class="text-blue-500 hover:text-blue-700">Gestionar Tablas</a>
-                            <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512"><path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z"/></svg>
+                            <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512">
+                                <path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z" />
+                            </svg>
                         </li>
                         <li class="flex items-center">
                             <a href="{{ route('table.view', ['table' => $table]) }}" class="text-blue-500 hover:text-blue-700">{{ str_replace('_', ' ', $table) }}</a>
-                            <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512"><path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z"/></svg>
+                            <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512">
+                                <path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z" />
+                            </svg>
                         </li>
                         <li class="flex items-center">
                             <span class="text-gray-700">Compartir</span>
@@ -77,7 +81,14 @@
                                 @foreach ($filteredSharedData as $data)
                                 <tr>
                                     <td class="px-6 py-4 text-center whitespace-nowrap">{{ $data->usuario_compartido }}</td>
-                                    <td class="px-6 py-4 text-center whitespace-nowrap">{{ $data->user_name }}</td>
+                                    <td class="px-6 py-4 text-center whitespace-nowrap">
+                                        <div class="flex items-center justify-center">
+                                            {{ $data->user_name }}
+                                            @if ($data->profile_photo_path)
+                                            <img src="{{ asset('storage/' . $data->profile_photo_path) }}" alt="Profile Photo" class="ml-2 w-10 h-10 rounded-full border">
+                                            @endif
+                                        </div>
+                                    </td>
                                     <td class="px-6 py-4 text-center whitespace-nowrap">{{ str_replace('_', ' ', $data->tipo_tabla) }}</td>
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
                                         @if ($data->editar)

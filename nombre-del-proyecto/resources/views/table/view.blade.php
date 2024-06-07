@@ -90,7 +90,7 @@
                                 <div class="flex items-center">
                                     {{ $owner->name }}#{{ $value }}
                                     @if ($owner->profile_photo_path)
-                                    <img src="{{ asset('storage/' . $owner->profile_photo_path) }}" alt="Profile Photo" class="ml-2 mr-1 w-10 h-10 rounded-full">
+                                    <img src="{{ asset('storage/' . $owner->profile_photo_path) }}" alt="Profile Photo" class="ml-2 mr-1 w-10 h-10 rounded-full border">
                                     @endif
                                 </div>
                                 @else

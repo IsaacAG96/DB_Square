@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use App\Exports\TableExport;
+use App\Notifications\ShareTableNotification;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Response;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NotifiableUser;
+
 
 class TableController extends Controller
 {
@@ -261,7 +264,7 @@ class TableController extends Controller
         $sharedData = DB::table('compartir')
             ->join('users', 'compartir.usuario_compartido', '=', 'users.id')
             ->where('tipo_tabla', $table)
-            ->select('compartir.*', 'users.name as user_name')
+            ->select('compartir.*', 'users.name as user_name','users.profile_photo_path')
             ->get();
 
         return view('table.share', compact('table', 'sharedData'));
@@ -565,6 +568,7 @@ class TableController extends Controller
 
         return $pdf->download($table . '.pdf');
     }
+    
     public function sendEmail(Request $request, $table)
     {
         $request->validate([
@@ -572,40 +576,18 @@ class TableController extends Controller
             'message' => 'nullable|string',
         ]);
 
-        $userId = Auth::id();
-        $sortField = $request->input('sort_field', 'id');
-        $sortOrder = $request->input('sort_order', 'asc');
+        $user = Auth::user();
+        $email = $request->input('email');
+        $message = $request->input('message', '');
+        $userName = $user->name; // Obtener el nombre del usuario que comparte la tabla
 
-        // Verificar si la tabla existe
-        if (!Schema::hasTable($table)) {
-            return redirect()->route('table.gestionar')->with('error', 'La tabla no existe.');
-        }
+        // Crear el objeto notifiable
+        $notifiable = new NotifiableUser($email);
 
-        // Obtener los datos de la tabla aplicando los filtros
-        $filters = $request->except(['sort_field', 'sort_order', 'page']);
-        $query = DB::table($table)->where('id_propietario', $userId);
+        // Enviar la notificación
+        Notification::send($notifiable, new ShareTableNotification($table, $message, $userName));
 
-        foreach ($filters as $field => $value) {
-            if ($value) {
-                $query->where($field, 'like', "%{$value}%");
-            }
-        }
-
-        $data = $query->orderBy($sortField, $sortOrder)->get();
-
-        // Crear el contenido del correo
-        $emailData = [
-            'table' => $table,
-            'data' => $data,
-            'message' => $request->input('message', '')
-        ];
-
-        // Enviar el correo
-        Mail::send('emails.shareTable', $emailData, function ($message) use ($request, $table) {
-            $message->to($request->input('email'))
-                ->subject('Compartir Tabla: ' . str_replace('_', ' ', $table));
-        });
-
-        return redirect()->route('table.share', ['table' => $table])->with('success', 'Correo enviado correctamente.');
+        return redirect()->route('table.share', ['table' => $table])
+            ->with('success', 'Correo enviado correctamente.');
     }
 }
