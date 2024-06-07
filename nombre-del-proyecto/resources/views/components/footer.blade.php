@@ -9,7 +9,7 @@
                     <span class="text-gray-300 ml-3 text-sm font-medium">DB SQUARE</span>
                 </div>
             </div>
-            <p class="text-gray-400 text-sm">&copy; 2024 DB SQUARE. Todos los derechos reservados.</p>
+            <p class="text-gray-400 text-sm">&copy; 2024 DB SQUARE. All rights reserved.</p>
             <div class="flex space-x-4">
                 <a href="https://twitter.com" class="text-gray-400 hover:text-white">
                     <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
