@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCompartirTable extends Migration
+class CreateShareTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateCompartirTable extends Migration
      */
     public function up()
     {
-        Schema::create('compartir', function (Blueprint $table) {
+        Schema::create('share', function (Blueprint $table) {
             $table->id();
-            $table->string('tipo_tabla', 255);
-            $table->integer('propietario');
-            $table->integer('usuario_compartido');
-            $table->boolean('visualizar');
-            $table->boolean('editar');
+            $table->string('table_type', 255);
+            $table->integer('owner');
+            $table->integer('shared_user');
+            $table->boolean('view');
+            $table->boolean('edit');
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ class CreateCompartirTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('compartir');
+        Schema::dropIfExists('share');
     }
 }

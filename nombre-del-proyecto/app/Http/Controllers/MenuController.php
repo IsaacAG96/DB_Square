@@ -31,9 +31,9 @@ class MenuController extends Controller
             'password_reset_tokens', 'permissions', 'personal_access_tokens', 'roles',
             'role_has_permissions', 'sessions', 'teams', 'team_invitations', 'team_user',
             'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring', 'users',
-            'compartir' // Excluir la tabla 'compartir'
+            'share','imported' // Excluir la tabla 'compartir'
         ];
-        $excludedFields = ['id', 'fecha_creacion', 'ultima_modificacion', 'permiso_visualizar', 'id_propietario'];
+        $excludedFields = ['id', 'created_at', 'updated_at', 'owner_id'];
 
         // Obtener todas las tablas
         $allTables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
@@ -62,12 +62,12 @@ class MenuController extends Controller
         // Obtener el usuario autenticado
         $user = Auth::user();
         $importedTables = [
-            'agenda_contactos' => $user->contactos,
-            'coleccion_discos' => $user->discos,
-            'coleccion_viajes' => $user->viajes,
-            'lista_compra' => $user->compra,
-            'lista_programas' => $user->programas,
-            'lista_cuentas' => $user->cuentas,
+            'contacts' => $user->contactos,
+            'disc_collection' => $user->discos,
+            'travel_collection' => $user->viajes,
+            'shopping_list' => $user->compra,
+            'program_list' => $user->programas,
+            'accounts_list' => $user->cuentas,
         ];
 
         return view('menu.importar', ['tables' => $paginatedTables, 'importedTables' => $importedTables]);
@@ -84,12 +84,12 @@ class MenuController extends Controller
 
         // Definir las tablas y sus campos booleanos correspondientes
         $tables = [
-            'coleccion_discos' => 'discos',
-            'coleccion_viajes' => 'viajes',
-            'agenda_contactos' => 'contactos',
-            'lista_compra' => 'compra',
-            'lista_programas' => 'programas',
-            'lista_cuentas' => 'cuentas'
+            'disc_collection' => 'discos',
+            'travel_collection' => 'viajes',
+            'contacts' => 'contactos',
+            'shopping_list' => 'compra',
+            'program_list' => 'programas',
+            'accounts_list' => 'cuentas'
         ];
 
         // Filtrar las tablas basándose en los campos booleanos del usuario
@@ -121,7 +121,7 @@ class MenuController extends Controller
     public function deleteTable($table)
     {
         \Schema::dropIfExists($table);
-        return redirect()->route('menu.gestionar')->with('success', 'Tabla eliminada con éxito');
+        return redirect()->route('menu.gestionar')->with('success', 'Table deleted successfully');
     }
 
     public function importTable(Request $request)
@@ -131,30 +131,30 @@ class MenuController extends Controller
 
         // Cambia el campo correspondiente a true
         switch ($tableName) {
-            case 'agenda_contactos':
+            case 'contacts':
                 $user->contactos = true;
                 break;
-            case 'coleccion_discos':
+            case 'disc_collection':
                 $user->discos = true;
                 break;
-            case 'coleccion_viajes':
+            case 'travel_collection':
                 $user->viajes = true;
                 break;
-            case 'lista_compra':
+            case 'shopping_list':
                 $user->compra = true;
                 break;
-            case 'lista_programas':
+            case 'program_list':
                 $user->programas = true;
                 break;
-            case 'lista_cuentas':
+            case 'accounts_list':
                 $user->cuentas = true;
                 break;
             default:
-                return redirect()->route('menu.importar')->with('error', 'Tabla no válida.');
+                return redirect()->route('menu.importar')->with('error', 'Invalid table');
         }
 
         $user->save();
 
-        return redirect()->route('menu.importar')->with('success', 'Tabla importada correctamente.');
+        return redirect()->route('menu.importar')->with('success', 'Table imported successfully');
     }
 }
