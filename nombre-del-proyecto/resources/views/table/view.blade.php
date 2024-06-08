@@ -59,7 +59,7 @@
                         <tr>
                             @foreach (array_keys((array) $data->first()) as $column)
                             @if ($column != 'id')
-                            <th scope="col" class="px-2 py-2 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
+                            <th scope="col" class="px-2 py-2 text-center text-xs font-medium text-gray-900 uppercase tracking-wider">
                                 {{ $column == 'id_propietario' ? __('Owner') : $column }}
                                 <a href="{{ route('table.view', ['table' => $table, 'sort_field' => $column, 'sort_order' => ($sortField == $column && $sortOrder == 'asc') ? 'desc' : 'asc'] + request()->except(['sort_field', 'sort_order', 'page'])) }}">
                                     @if ($sortField == $column)
@@ -82,15 +82,15 @@
                         <tr class="{{ $index % 2 == 0 ? 'bg-indigo-100' : '' }} text-center">
                             @foreach ($row as $key => $value)
                             @if ($key != 'id')
-                            <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-900">
-                                @if ($key == 'id_propietario')
+                            <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-600">
+                                @if ($key == 'owner_id')
                                 @php
                                 $owner = $owners[$value];
                                 @endphp
                                 <div class="flex items-center">
                                     {{ $owner->name }}#{{ $value }}
                                     @if ($owner->profile_photo_path)
-                                    <img src="{{ asset('storage/' . $owner->profile_photo_path) }}" alt="{{__('Profile Photo')}}" class="ml-2 mr-1 w-10 h-10 rounded-full border">
+                                        <img src="{{ asset('storage/' . $owner->profile_photo_path) }}" alt="Profile Photo" class="ml-2 mr-1 w-10 h-10 rounded-full border">
                                     @endif
                                 </div>
                                 @else
@@ -103,6 +103,9 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="mt-4">
+                    {{ $data->links() }}
+                </div>
             </div>
             @endif
             <div class="mt-4 text-left">

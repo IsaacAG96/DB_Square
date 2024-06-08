@@ -15,8 +15,10 @@ use Illuminate\Support\Facades\Response;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\NotifiableUser;
+use App\Http\Controllers\Controller as BaseController;
 
-class TableController extends Controller
+
+class TableController extends BaseController
 {
     // Mostrar las tablas que tiene el usuario
     public function gestionar()
@@ -91,11 +93,15 @@ class TableController extends Controller
             }
         }
 
-        $data = $query->orderBy($sortField, $sortOrder)->get();
+        $perPage = 10; // Número de registros por página
+        $data = $query->orderBy($sortField, $sortOrder)->paginate($perPage);
 
         // Obtener los nombres de los propietarios
-        $ownerIds = $data->pluck('owner_id')->unique()->toArray();
-        $owners = DB::table('users')->whereIn('id', $ownerIds)->get(['id', 'name', 'profile_photo_path'])->keyBy('id');
+        $ownerIds = collect($data->items())->pluck('owner_id')->unique()->toArray();
+        $owners = DB::table('users')
+            ->whereIn('id', $ownerIds)
+            ->get(['id', 'name', 'profile_photo_path'])
+            ->keyBy('id');
 
         return view('table.view', [
             'table' => $table,
@@ -106,6 +112,7 @@ class TableController extends Controller
             'filters' => $filters
         ]);
     }
+
 
     public function edit(Request $request, $table)
     {
@@ -141,10 +148,11 @@ class TableController extends Controller
             }
         }
 
-        $data = $query->orderBy($sortField, $sortOrder)->get();
+        $perPage = 10; // Número de registros por página
+        $data = $query->orderBy($sortField, $sortOrder)->paginate($perPage);
 
         // Obtener los nombres de los propietarios
-        $ownerIds = $data->pluck('owner_id')->unique()->toArray();
+        $ownerIds = collect($data->items())->pluck('owner_id')->unique()->toArray();
         $owners = DB::table('users')->whereIn('id', $ownerIds)->pluck('name', 'id');
 
         return view('table.edit', [
@@ -163,10 +171,10 @@ class TableController extends Controller
         if (!Schema::hasTable($table)) {
             return redirect()->route('table.gestionar')->with('error', 'The table does not exist');
         }
-    
+
         // Obtener el ID del usuario actual
         $userId = Auth::id();
-    
+
         // Verificar que el usuario tenga permisos para editar
         $allowedOwners = DB::table('share')
             ->where('shared_user', $userId)
@@ -174,19 +182,19 @@ class TableController extends Controller
             ->where('edit', true)
             ->pluck('owner')
             ->toArray();
-    
+
         $allowedOwners[] = $userId; // Incluir el ID del usuario actual
-    
+
         // Verificar que el registro pertenece a un propietario permitido
         $record = DB::table($table)->where('id', $id)->first();
-    
+
         if (!$record || !in_array($record->id_propietario, $allowedOwners)) {
             return redirect()->route('table.edit', ['table' => $table])->with('error', 'You do not have permission to edit this record');
         }
-    
+
         // Validar los datos del formulario (exceptuando _token, _method y ULTIMA_MODIFICACION)
         $validatedData = $request->except('_token', '_method', 'updated_at');
-    
+
         // Puedes añadir reglas de validación si es necesario
         $validatedData = $request->validate([
             'item' => 'required|string|max:255',
@@ -197,23 +205,23 @@ class TableController extends Controller
             'store' => 'nullable|string|max:255',
             'created_at' => 'required|date',
         ]);
-    
+
         // Actualizar el campo ULTIMA_MODIFICACION con la fecha y hora actual en la zona horaria de Madrid
         $validatedData['updated_at'] = now('Europe/Madrid');
-    
+
         // Actualizar los datos del registro específico
         $affected = DB::table($table)
             ->where('id', $id)
             ->update($validatedData);
-    
+
         if ($affected) {
             return redirect()->route('table.edit', ['table' => $table])->with('success', 'Data updated successfully');
         } else {
             return redirect()->route('table.edit', ['table' => $table])->with('error', 'No changes were made');
         }
     }
-    
-    
+
+
 
     public function deleteRecord(Request $request, $table, $id)
     {
@@ -262,7 +270,7 @@ class TableController extends Controller
         $sharedData = DB::table('share')
             ->join('users', 'share.shared_user', '=', 'users.id')
             ->where('table_type', $table)
-            ->select('share.*', 'users.name as user_name','users.profile_photo_path')
+            ->select('share.*', 'users.name as user_name', 'users.profile_photo_path')
             ->get();
 
         return view('table.share', compact('table', 'sharedData'));
@@ -434,7 +442,7 @@ class TableController extends Controller
         // Obtener los nombres de las columnas de la tabla y sus propiedades
         $columns = Schema::getColumnListing($table);
         $columnsInfo = [];
-        
+
         foreach ($columns as $column) {
             if ($column != 'fecha_creacion' && $column != 'updated_at' && $column != 'id' && $column != 'owner_id') {
                 $columnsInfo[$column] = !Schema::getConnection()->getDoctrineColumn($table, $column)->getNotnull();
@@ -499,7 +507,7 @@ class TableController extends Controller
                 case 'datetime':
                     $rules[] = 'date';
                     break;
-                // Añadir más tipos según sea necesario
+                    // Añadir más tipos según sea necesario
             }
 
             $validationRules[$column] = implode('|', $rules);
@@ -566,7 +574,7 @@ class TableController extends Controller
 
         return $pdf->download($table . '.pdf');
     }
-    
+
     public function sendEmail(Request $request, $table)
     {
         $request->validate([

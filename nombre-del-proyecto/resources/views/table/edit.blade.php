@@ -46,12 +46,12 @@
             </form><br>
 
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 border">
-                    <thead class="bg-gray-100">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100 border">
                         <tr>
                             @foreach (array_keys((array) $data->first()) as $column)
                             @if ($column != 'id')
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-800 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-800 uppercase tracking-wider border">
                                 {{ $column == 'id_propietario' ? __('Owner') : $column }}
                                 <a href="{{ route('table.edit', ['table' => $table, 'sort_field' => $column, 'sort_order' => ($sortField == $column && $sortOrder == 'asc') ? 'desc' : 'asc'] + request()->except(['sort_field', 'sort_order', 'page'])) }}">
                                     @if ($sortField == $column)
@@ -72,7 +72,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="bg-white divide-y divide-gray-200 border">
                         @foreach ($data as $row)
                         <tr>
                             <form method="POST" action="{{ route('table.update', ['table' => $table, 'id' => $row->id]) }}">
@@ -80,18 +80,18 @@
                                 @method('PUT')
                                 @foreach ($row as $key => $value)
                                 @if ($key != 'id')
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    @if ($key == 'id_propietario')
-                                    <input type="text" name="{{ $key }}" value="{{ $owners[$value] }}#{{ $value }}" class="w-full px-2 py-1 border border-transparent rounded" readonly>
-                                    @elseif ($key == 'fecha_creacion' || $key == 'ultima_modificacion')
-                                    <input type="text" name="{{ $key }}" value="{{ $value }}" class="w-full px-2 py-1 border border-transparent rounded" readonly>
+                                <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-900 border">
+                                    @if ($key == 'owner_id')
+                                    <input type="text" name="{{ $key }}" value="{{ $owners[$value] }}#{{ $value }}" class="input-adjust-width w-full px-2 py-1 border border-transparent rounded" readonly>
+                                    @elseif ($key == 'created_at' || $key == 'updated_at')
+                                    <input type="text" name="{{ $key }}" value="{{ $value }}" class="input-adjust-width w-full px-1 py-1 border border-transparent rounded" readonly>
                                     @else
-                                    <input type="text" name="{{ $key }}" value="{{ $value }}" class="input-adjust-width w-full px-2 py-1 border border-gray-300 rounded" oninput="adjustWidth(this)">
+                                    <input type="text" name="{{ $key }}" value="{{ $value }}" class="input-adjust-width w-full px-1 py-1 border border-gray-300 rounded" oninput="adjustWidth(this)">
                                     @endif
                                 </td>
                                 @endif
                                 @endforeach
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" colspan="2">
+                                <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-900 border">
                                     <div class="flex space-x-4">
                                         <button type="submit" class="px-4 py-2 bg-blue-200 text-blue-600 hover:bg-blue-300 transition duration-150 rounded-md">{{__('Update')}}</button>
                                     </div>
@@ -100,7 +100,7 @@
                             <form method="POST" action="{{ route('table.deleteRecord', ['table' => $table, 'id' => $row->id]) }}" onsubmit="return confirm('Are you sure you want to delete this record?');">
                                 @csrf
                                 @method('DELETE')
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" colspan="2">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     <button type="submit" class="px-4 py-2 bg-red-200 text-red-600 hover:bg-red-300 transition duration-150 rounded-md">{{__('Delete')}}</button>
                                 </td>
                             </form>
@@ -108,6 +108,9 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="mt-4">
+                    {{ $data->links() }}
+                </div>
             </div>
             @endif
             <div class="mt-4 text-right">
@@ -127,7 +130,7 @@
         });
 
         function adjustWidth(input) {
-            input.style.width = (input.value.length + 2) + 'ch';
+            input.style.width = (input.value.length + 2)+'ch';
         }
     </script>
 </x-app-layout>
