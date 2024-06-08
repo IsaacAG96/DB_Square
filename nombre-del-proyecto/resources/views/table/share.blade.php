@@ -59,12 +59,7 @@
                     <!-- Tabla de datos compartidos -->
                     <div class="mt-6 overflow-x-auto">
                         <h4 class="text-l font-semibold text-gray-900">{{__('Users with Access')}}</h4>
-                        @php
-                        $filteredSharedData = $sharedData->filter(function ($data) {
-                        return $data->propietario == Auth::user()->id;
-                        });
-                        @endphp
-                        @if ($filteredSharedData->isEmpty())
+                        @if ($sharedData->isEmpty())
                         <p class="text-gray-600">{{__('This table has not been shared with any users.')}}</p>
                         @else
                         <table class="min-w-full divide-y divide-gray-200 mt-4 border">
@@ -78,9 +73,9 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                @foreach ($filteredSharedData as $data)
+                                @foreach ($sharedData as $data)
                                 <tr>
-                                    <td class="px-6 py-4 text-center whitespace-nowrap">{{ $data->usuario_compartido }}</td>
+                                    <td class="px-6 py-4 text-center whitespace-nowrap">{{ $data->shared_user }}</td>
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
                                         <div class="flex items-center justify-center">
                                             {{ $data->user_name }}
@@ -89,11 +84,11 @@
                                             @endif
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-center whitespace-nowrap">{{ str_replace('_', ' ', $data->tipo_tabla) }}</td>
+                                    <td class="px-6 py-4 text-center whitespace-nowrap">{{ str_replace('_', ' ', $data->table_type) }}</td>
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
-                                        @if ($data->editar)
+                                        @if ($data->edit)
                                         {{__('Edit')}}
-                                        @elseif ($data->visualizar)
+                                        @elseif ($data->view)
                                         {{__('View')}}
                                         @endif
                                     </td>

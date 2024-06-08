@@ -266,10 +266,13 @@ class TableController extends BaseController
     // Compartir la tabla
     public function share($table)
     {
+        $userId = Auth::id();
+
         // Obtener los datos compartidos
         $sharedData = DB::table('share')
             ->join('users', 'share.shared_user', '=', 'users.id')
             ->where('table_type', $table)
+            ->where('owner', $userId) // Asegúrate de que solo se incluyen las filas del propietario actual
             ->select('share.*', 'users.name as user_name', 'users.profile_photo_path')
             ->get();
 
