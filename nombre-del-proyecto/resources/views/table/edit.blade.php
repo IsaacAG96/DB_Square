@@ -33,7 +33,7 @@
                     @foreach (array_keys((array) $data->first()) as $column)
                     @if ($column != 'id')
                     <div>
-                        <label for="{{ $column }}" class="block text-sm font-medium text-gray-700">{{ $column == 'id_propietario' ? __('Owner') : $column }}</label>
+                        <label for="{{ $column }}" class="block text-sm font-medium text-gray-700">{{ $column == 'owner_id' ? __('Owner') : $column }}</label>
                         <input type="text" name="{{ $column }}" id="{{ $column }}" value="{{ $filters[$column] ?? '' }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="{{ __('Filter') }} {{ $column }}">
                     </div>
                     @endif
@@ -52,7 +52,7 @@
                             @foreach (array_keys((array) $data->first()) as $column)
                             @if ($column != 'id')
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-800 uppercase tracking-wider border">
-                                {{ $column == 'id_propietario' ? __('Owner') : $column }}
+                                {{ $column == 'owner_id' ? __('Owner') : $column }}
                                 <a href="{{ route('table.edit', ['table' => $table, 'sort_field' => $column, 'sort_order' => ($sortField == $column && $sortOrder == 'asc') ? 'desc' : 'asc'] + request()->except(['sort_field', 'sort_order', 'page'])) }}">
                                     @if ($sortField == $column)
                                     @if ($sortOrder == 'asc')

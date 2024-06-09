@@ -166,60 +166,60 @@ class TableController extends BaseController
     }
 
     public function update(Request $request, $table, $id)
-    {
-        // Verificar si la tabla existe
-        if (!Schema::hasTable($table)) {
-            return redirect()->route('table.gestionar')->with('error', 'The table does not exist');
-        }
-
-        // Obtener el ID del usuario actual
-        $userId = Auth::id();
-
-        // Verificar que el usuario tenga permisos para editar
-        $allowedOwners = DB::table('share')
-            ->where('shared_user', $userId)
-            ->where('table_type', $table)
-            ->where('edit', true)
-            ->pluck('owner')
-            ->toArray();
-
-        $allowedOwners[] = $userId; // Incluir el ID del usuario actual
-
-        // Verificar que el registro pertenece a un propietario permitido
-        $record = DB::table($table)->where('id', $id)->first();
-
-        if (!$record || !in_array($record->id_propietario, $allowedOwners)) {
-            return redirect()->route('table.edit', ['table' => $table])->with('error', 'You do not have permission to edit this record');
-        }
-
-        // Validar los datos del formulario (exceptuando _token, _method y ULTIMA_MODIFICACION)
-        $validatedData = $request->except('_token', '_method', 'updated_at');
-
-        // Puedes añadir reglas de validación si es necesario
-        $validatedData = $request->validate([
-            'item' => 'required|string|max:255',
-            'quantity' => 'required|integer',
-            'price' => 'required|numeric',
-            'weight_volume' => 'required|numeric',
-            'unit_of_measurement' => 'nullable|string|max:255',
-            'store' => 'nullable|string|max:255',
-            'created_at' => 'required|date',
-        ]);
-
-        // Actualizar el campo ULTIMA_MODIFICACION con la fecha y hora actual en la zona horaria de Madrid
-        $validatedData['updated_at'] = now('Europe/Madrid');
-
-        // Actualizar los datos del registro específico
-        $affected = DB::table($table)
-            ->where('id', $id)
-            ->update($validatedData);
-
-        if ($affected) {
-            return redirect()->route('table.edit', ['table' => $table])->with('success', 'Data updated successfully');
-        } else {
-            return redirect()->route('table.edit', ['table' => $table])->with('error', 'No changes were made');
-        }
+{
+    // Verificar si la tabla existe
+    if (!Schema::hasTable($table)) {
+        return redirect()->route('table.gestionar')->with('error', 'The table does not exist');
     }
+
+    // Obtener el ID del usuario actual
+    $userId = Auth::id();
+
+    // Verificar que el usuario tenga permisos para editar
+    $allowedOwners = DB::table('share')
+        ->where('shared_user', $userId)
+        ->where('table_type', $table)
+        ->where('edit', true)
+        ->pluck('owner')
+        ->toArray();
+
+    $allowedOwners[] = $userId; // Incluir el ID del usuario actual
+
+    // Verificar que el registro pertenece a un propietario permitido
+    $record = DB::table($table)->where('id', $id)->first();
+
+    if (!$record || !in_array($record->owner_id, $allowedOwners)) {
+        return redirect()->route('table.edit', ['table' => $table])->with('error', 'You do not have permission to edit this record');
+    }
+
+    // Validar los datos del formulario (exceptuando _token, _method y updated_at)
+    $validatedData = $request->except('_token', '_method', 'updated_at');
+
+    // Puedes añadir reglas de validación si es necesario
+    $validatedData = $request->validate([
+        'item' => 'required|string|max:255',
+        'quantity' => 'required|integer',
+        'price' => 'required|numeric',
+        'weight_volume' => 'required|numeric',
+        'unit_of_measurement' => 'nullable|string|max:255',
+        'store' => 'nullable|string|max:255',
+        'created_at' => 'required|date',
+    ]);
+
+    // Actualizar el campo updated_at con la fecha y hora actual en la zona horaria de Madrid
+    $validatedData['updated_at'] = now('Europe/Madrid');
+
+    // Actualizar los datos del registro específico
+    $affected = DB::table($table)
+        ->where('id', $id)
+        ->update($validatedData);
+
+    if ($affected) {
+        return redirect()->route('table.edit', ['table' => $table])->with('success', 'Data updated successfully');
+    } else {
+        return redirect()->route('table.edit', ['table' => $table])->with('error', 'No changes were made');
+    }
+}
 
 
 
@@ -464,21 +464,21 @@ class TableController extends BaseController
         if (!Schema::hasTable($table)) {
             return redirect()->route('table.gestionar')->with('error', 'The table does not exist');
         }
-
+    
         // Obtener la descripción de la tabla
         $columns = Schema::getColumnListing($table);
         $validationRules = [];
         $validationMessages = [];
-
+    
         foreach ($columns as $column) {
             // Omitir ciertas columnas
-            if (in_array($column, ['id', 'owner_id', 'fecha_creacion', 'updated_at'])) {
+            if (in_array($column, ['id', 'owner_id', 'created_at', 'updated_at'])) {
                 continue;
             }
-
+    
             // Obtener la definición de la columna
             $columnType = Schema::getConnection()->getDoctrineColumn($table, $column);
-
+    
             // Construir reglas de validación
             $rules = [];
             if (!$columnType->getNotnull()) {
@@ -487,7 +487,7 @@ class TableController extends BaseController
                 $rules[] = 'required';
                 $validationMessages["{$column}.required"] = "The field {$column} is required";
             }
-
+    
             switch ($columnType->getType()->getName()) {
                 case 'string':
                     $rules[] = 'string';
@@ -512,21 +512,22 @@ class TableController extends BaseController
                     break;
                     // Añadir más tipos según sea necesario
             }
-
+    
             $validationRules[$column] = implode('|', $rules);
         }
-
+    
         // Validar los datos del formulario
         $validatedData = $request->validate($validationRules, $validationMessages);
-
+    
         // Añadir el id_propietario al nuevo registro
         $validatedData['owner_id'] = Auth::id();
-
+    
         // Insertar el nuevo registro en la tabla
         DB::table($table)->insert($validatedData);
-
+    
         return redirect()->route('table.edit', ['table' => $table])->with('success', 'Record added successfully');
     }
+    
     public function exportPdf(Request $request, $table)
     {
         $userId = Auth::id();

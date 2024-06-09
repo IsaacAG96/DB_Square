@@ -31,7 +31,7 @@ class MenuController extends Controller
             'password_reset_tokens', 'permissions', 'personal_access_tokens', 'roles',
             'role_has_permissions', 'sessions', 'teams', 'team_invitations', 'team_user',
             'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring', 'users',
-            'share','imported' // Excluir la tabla 'compartir'
+            'share','imported_tables' // Excluir la tabla 'compartir'
         ];
         $excludedFields = ['id', 'created_at', 'updated_at', 'owner_id'];
 
