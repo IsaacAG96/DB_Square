@@ -7,11 +7,15 @@
                     <ol class="list-none p-0 inline-flex">
                         <li class="flex items-center">
                             <a href="{{ route('dashboard') }}" class="text-blue-500 hover:text-blue-700">{{ __('Home') }}</a>
-                            <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512"><path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z"/></svg>
+                            <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512">
+                                <path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z" />
+                            </svg>
                         </li>
                         <li class="flex items-center">
                             <a href="{{ route('menu.index') }}" class="text-blue-500 hover:text-blue-700">{{ __('Options Menu') }}</a>
-                            <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512"><path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z"/></svg>
+                            <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512">
+                                <path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z" />
+                            </svg>
                         </li>
                         <li class="flex items-center">
                             <span class="text-gray-700">{{ __('Table List') }}</span>
@@ -40,41 +44,24 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach ($tables as $table)
                                 <tr>
-                                    @if($table == 'accounts_list')
                                     <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                        @if($table == 'accounts_list')
                                         <img src="{{ asset('images/icons/accounts_list.png') }}" class="w-10 h-10 mr-2" alt="Accounts List">
-                                        {{ str_replace('_', ' ', $table) }}
-                                    </td>
-                                    @elseif($table == 'contacts')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                        @elseif($table == 'contacts')
                                         <img src="{{ asset('images/icons/contacts.png') }}" class="w-10 h-10 mr-2" alt="Contacts">
-                                        {{ str_replace('_', ' ', $table) }}
-                                    </td>
-                                    @elseif($table == 'disc_collection')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                        @elseif($table == 'disc_collection')
                                         <img src="{{ asset('images/icons/disc_collection.png') }}" class="w-10 h-10 mr-2" alt="Disc Collection">
-                                        {{ str_replace('_', ' ', $table) }}
-                                    </td>
-                                    @elseif($table == 'program_list')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                        @elseif($table == 'program_list')
                                         <img src="{{ asset('images/icons/program_list.png') }}" class="w-10 h-10 mr-2" alt="Program List">
-                                        {{ str_replace('_', ' ', $table) }}
-                                    </td>
-                                    @elseif($table == 'shopping_list')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                        @elseif($table == 'shopping_list')
                                         <img src="{{ asset('images/icons/shopping_list.png') }}" class="w-10 h-10 mr-2" alt="Program List">
-                                        {{ str_replace('_', ' ', $table) }}
-                                    </td>
-                                    @elseif($table == 'travel_collection')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                        @elseif($table == 'travel_collection')
                                         <img src="{{ asset('images/icons/travel_collection.png') }}" class="w-10 h-10 mr-2" alt="Program List">
+                                        @else
+                                        {{ str_replace('_', ' ', $table) }}
+                                        @endif
                                         {{ str_replace('_', ' ', $table) }}
                                     </td>
-                                    @else
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
-                                        {{ str_replace('_', ' ', $table) }}
-                                    </td>
-                                    @endif
                                     <td class="px-6 py-4 whitespace-nowrap space-x-2">
                                         <a href="{{ route('table.view', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-indigo-200 text-indigo-600 hover:bg-indigo-300 transition duration-150 rounded-md">{{ __('View') }}</a>
                                         <a href="{{ route('table.edit', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-yellow-200 text-yellow-600 hover:bg-yellow-300 transition duration-150 rounded-md">{{ __('Edit') }}</a>

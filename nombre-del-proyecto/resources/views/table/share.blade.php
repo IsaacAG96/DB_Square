@@ -23,8 +23,26 @@
                     </ol>
                 </nav>
                 <!-- Fin de migas de pan -->
-                <div class="mb-4">
-                    <h3 class="text-xl font-semibold text-gray-900">{{__('Share Table')}}: <span class="uppercase">{{ str_replace('_', ' ', $table) }}</span></h3>
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900">{{__('Share Table')}}:</h3>
+                    <div class="flex items-center mt-2">
+                        @if($table == 'accounts_list')
+                        <img src="{{ asset('images/icons/accounts_list.png') }}" class="w-8 h-8 mr-2" alt="Accounts List">
+                        @elseif($table == 'contacts')
+                        <img src="{{ asset('images/icons/contacts.png') }}" class="w-8 h-8 mr-2" alt="Contacts">
+                        @elseif($table == 'disc_collection')
+                        <img src="{{ asset('images/icons/disc_collection.png') }}" class="w-8 h-8 mr-2" alt="Disc Collection">
+                        @elseif($table == 'program_list')
+                        <img src="{{ asset('images/icons/program_list.png') }}" class="w-8 h-8 mr-2" alt="Program List">
+                        @elseif($table == 'shopping_list')
+                        <img src="{{ asset('images/icons/shopping_list.png') }}" class="w-8 h-8 mr-2" alt="Program List">
+                        @elseif($table == 'travel_collection')
+                        <img src="{{ asset('images/icons/travel_collection.png') }}" class="w-8 h-8 mr-2" alt="Program List">
+                        @else
+                        <span class="uppercase text-l font-semibold text-gray-900">{{ str_replace('_', ' ', $table) }}</span>
+                        @endif
+                        <span class="uppercase text-l font-semibold text-gray-900">{{ str_replace('_', ' ', $table) }}</span>
+                    </div>
                 </div>
                 <div class="card-body">
                     @if (session('success'))
@@ -51,13 +69,13 @@
                                 <option value="editar">{{__('Edit')}}</option>
                             </select>
                         </div>
-                        <div class="flex justify-end">
+                        <div class="justified-left">
                             <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-200 text-green-600 hover:bg-green-300 transition duration-150 rounded-md">{{__('Share')}}</button>
                         </div>
                     </form>
 
                     <!-- Tabla de datos compartidos -->
-                    <div class="mt-6 overflow-x-auto">
+                    <div class="mt-10 overflow-x-auto">
                         <h4 class="text-l font-semibold text-gray-900">{{__('Users with Access')}}</h4>
                         @if ($sharedData->isEmpty())
                         <p class="text-gray-600">{{__('This table has not been shared with any users.')}}</p>
