@@ -40,8 +40,42 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach ($tables as $table)
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-base uppercase">{{ str_replace('_', ' ', $table) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap flex space-x-2">
+                                    @if($table == 'accounts_list')
+                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-base uppercase flex items-center">
+                                        <img src="{{ asset('images/icons/accounts_list.png') }}" class="w-10 h-10 mr-2" alt="Accounts List">
+                                        {{ str_replace('_', ' ', $table) }}
+                                    </td>
+                                    @elseif($table == 'contacts')
+                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-base uppercase flex items-center">
+                                        <img src="{{ asset('images/icons/contacts.png') }}" class="w-10 h-10 mr-2" alt="Contacts">
+                                        {{ str_replace('_', ' ', $table) }}
+                                    </td>
+                                    @elseif($table == 'disc_collection')
+                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-base uppercase flex items-center">
+                                        <img src="{{ asset('images/icons/disc_collection.png') }}" class="w-10 h-10 mr-2" alt="Disc Collection">
+                                        {{ str_replace('_', ' ', $table) }}
+                                    </td>
+                                    @elseif($table == 'program_list')
+                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                        <img src="{{ asset('images/icons/program_list.png') }}" class="w-10 h-10 mr-2" alt="Program List">
+                                        {{ str_replace('_', ' ', $table) }}
+                                    </td>
+                                    @elseif($table == 'shopping_list')
+                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                        <img src="{{ asset('images/icons/shopping_list.png') }}" class="w-10 h-10 mr-2" alt="Program List">
+                                        {{ str_replace('_', ' ', $table) }}
+                                    </td>
+                                    @elseif($table == 'travel_collection')
+                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                        <img src="{{ asset('images/icons/travel_collection.png') }}" class="w-10 h-10 mr-2" alt="Program List">
+                                        {{ str_replace('_', ' ', $table) }}
+                                    </td>
+                                    @else
+                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                        {{ str_replace('_', ' ', $table) }}
+                                    </td>
+                                    @endif
+                                    <td class="px-6 py-4 whitespace-nowrap space-x-2">
                                         <a href="{{ route('table.view', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-indigo-200 text-indigo-600 hover:bg-indigo-300 transition duration-150 rounded-md">{{ __('View') }}</a>
                                         <a href="{{ route('table.edit', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-yellow-200 text-yellow-600 hover:bg-yellow-300 transition duration-150 rounded-md">{{ __('Edit') }}</a>
                                         <a href="{{ route('table.share', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-green-200 text-green-600 hover:bg-green-300 transition duration-150 rounded-md">{{ __('Share') }}</a>
