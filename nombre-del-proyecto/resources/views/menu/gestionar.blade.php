@@ -41,17 +41,17 @@
                                 @foreach ($tables as $table)
                                 <tr>
                                     @if($table == 'accounts_list')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-base uppercase flex items-center">
+                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
                                         <img src="{{ asset('images/icons/accounts_list.png') }}" class="w-10 h-10 mr-2" alt="Accounts List">
                                         {{ str_replace('_', ' ', $table) }}
                                     </td>
                                     @elseif($table == 'contacts')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-base uppercase flex items-center">
+                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
                                         <img src="{{ asset('images/icons/contacts.png') }}" class="w-10 h-10 mr-2" alt="Contacts">
                                         {{ str_replace('_', ' ', $table) }}
                                     </td>
                                     @elseif($table == 'disc_collection')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-base uppercase flex items-center">
+                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
                                         <img src="{{ asset('images/icons/disc_collection.png') }}" class="w-10 h-10 mr-2" alt="Disc Collection">
                                         {{ str_replace('_', ' ', $table) }}
                                     </td>

@@ -2,7 +2,7 @@
     <div class="flex flex-col min-h-screen">
         <x-slot name="header">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Inicio') }}
+                {{ __('Home') }}
             </h2>
         </x-slot>
         <div class="flex-grow">
