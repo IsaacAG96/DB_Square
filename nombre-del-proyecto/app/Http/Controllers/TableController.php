@@ -285,20 +285,48 @@ class TableController extends BaseController
         $userId = Auth::id();
         $sharedUserId = $request->input('user_id');
         $permission = $request->input('permission');
-
-        $data = [
-            'table_type' => $table,
-            'owner' => $userId,
-            'shared_user' => $sharedUserId,
-            'view' => true,
-            'edit' => $permission == 'edit'
-        ];
-
-        DB::table('share')->insert($data);
-
-        return redirect()->route('table.share', ['table' => $table])
-            ->with('success', 'Table shared successfully');
+    
+        // Verificar si ya existe un registro de compartir con el mismo usuario y tabla
+        $existingShare = DB::table('share')
+            ->where('table_type', $table)
+            ->where('owner', $userId)
+            ->where('shared_user', $sharedUserId)
+            ->first();
+    
+        if ($existingShare) {
+            // Si el tipo de permiso es el mismo, devolver un mensaje de que ya existe
+            if (($permission == 'edit' && $existingShare->edit) || ($permission == 'view' && $existingShare->view)) {
+                return redirect()->route('table.share', ['table' => $table])
+                    ->with('error', 'The table has already been shared with this user with the same permission.');
+            }
+    
+            // Si el tipo de permiso es diferente, actualizar el registro
+            DB::table('share')
+                ->where('id', $existingShare->id)
+                ->update([
+                    'view' => $permission == 'view',
+                    'edit' => $permission == 'edit'
+                ]);
+    
+            return redirect()->route('table.share', ['table' => $table])
+                ->with('success', 'Table sharing permissions updated successfully.');
+        } else {
+            // Crear un nuevo registro de compartir
+            $data = [
+                'table_type' => $table,
+                'owner' => $userId,
+                'shared_user' => $sharedUserId,
+                'view' => $permission == 'view',
+                'edit' => $permission == 'edit'
+            ];
+    
+            DB::table('share')->insert($data);
+    
+            return redirect()->route('table.share', ['table' => $table])
+                ->with('success', 'Table shared successfully.');
+        }
     }
+    
 
     // Eliminar acceso compartido
     public function deleteSharedAccess($id)

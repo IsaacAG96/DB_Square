@@ -35,9 +35,9 @@
                         @elseif($table == 'program_list')
                         <img src="{{ asset('images/icons/program_list.png') }}" class="w-8 h-8 mr-2" alt="Program List">
                         @elseif($table == 'shopping_list')
-                        <img src="{{ asset('images/icons/shopping_list.png') }}" class="w-8 h-8 mr-2" alt="Program List">
+                        <img src="{{ asset('images/icons/shopping_list.png') }}" class="w-8 h-8 mr-2" alt="Shopping List">
                         @elseif($table == 'travel_collection')
-                        <img src="{{ asset('images/icons/travel_collection.png') }}" class="w-8 h-8 mr-2" alt="Program List">
+                        <img src="{{ asset('images/icons/travel_collection.png') }}" class="w-8 h-8 mr-2" alt="Travel Collection">
                         @else
                         <span class="uppercase text-l font-semibold text-gray-900">{{ str_replace('_', ' ', $table) }}</span>
                         @endif
@@ -65,8 +65,8 @@
                         <div class="mb-4">
                             <label for="permission" class="block text-sm font-medium text-gray-700">{{__('Permission')}}</label>
                             <select id="permission" name="permission" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                                <option value="ver">{{__('View')}}</option>
-                                <option value="editar">{{__('Edit')}}</option>
+                                <option value="view">{{__('View')}}</option>
+                                <option value="edit">{{__('Edit')}}</option>
                             </select>
                         </div>
                         <div class="justified-left">
