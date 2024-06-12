@@ -46,6 +46,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/menu/gestionar', [MenuController::class, 'gestionar'])->name('menu.gestionar');
     Route::get('/menu/importar', [MenuController::class, 'importar'])->name('menu.importar');
     Route::post('/menu/importar', [MenuController::class, 'importTable'])->name('menu.importTable');
+    Route::delete('/tables/custom-delete/{table}', [MenuController::class, 'deleteCustomTable'])->name('table.custom-delete');
 
     // Rutas relacionadas con TableController
     Route::get('/tables/gestionar', [TableController::class, 'gestionar'])->name('table.gestionar');

@@ -77,13 +77,10 @@ class MenuController extends Controller
     public function gestionar()
     {
         $user = Auth::user();
-
-        // Obtener los campos booleanos del usuario
         $userTables = DB::table('users')->where('id', $user->id)->first([
             'discos', 'viajes', 'contactos', 'compra', 'programas', 'cuentas'
         ]);
-
-        // Definir las tablas y sus campos booleanos correspondientes
+    
         $tables = [
             'disc_collection' => 'discos',
             'travel_collection' => 'viajes',
@@ -92,25 +89,32 @@ class MenuController extends Controller
             'program_list' => 'programas',
             'accounts_list' => 'cuentas'
         ];
-
-        // Filtrar las tablas basándose en los campos booleanos del usuario
+    
         $availableTables = [];
         foreach ($tables as $table => $booleanField) {
             if ($userTables->$booleanField) {
-                $availableTables[$table] = $booleanField;
+                $availableTables[] = $table;
             }
         }
-
-        // Paginar los resultados
+    
         $perPage = 10;
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $currentPageItems = array_slice(array_keys($availableTables), ($currentPage - 1) * $perPage, $perPage);
+        $currentPageItems = array_slice($availableTables, ($currentPage - 1) * $perPage, $perPage);
         $paginatedTables = new LengthAwarePaginator($currentPageItems, count($availableTables), $perPage, $currentPage, [
             'path' => Paginator::resolveCurrentPath()
         ]);
-
-        return view('menu.gestionar', ['tables' => $paginatedTables]);
+    
+        // Obtener tablas personalizadas del usuario
+        $allTables = DB::select("SHOW TABLES LIKE '%\\_" . $user->id . "'");
+        $customTables = collect(array_map('current', $allTables));
+    
+        return view('menu.gestionar', [
+            'tables' => $paginatedTables,
+            'customTables' => $customTables
+        ]);
     }
+    
+
 
     public function editTable($table)
     {
@@ -203,5 +207,15 @@ class MenuController extends Controller
 
         // Redirigir con un mensaje de éxito
         return redirect()->route('menu.crear')->with('success', 'Table created successfully');
+    }
+    public function deleteCustomTable($table)
+    {
+        // Verificar si la tabla existe antes de eliminarla
+        if (Schema::hasTable($table)) {
+            Schema::dropIfExists($table);
+            return redirect()->route('menu.gestionar')->with('success', 'Table deleted successfully');
+        }
+
+        return redirect()->route('menu.gestionar')->with('error', 'Table does not exist');
     }
 }
