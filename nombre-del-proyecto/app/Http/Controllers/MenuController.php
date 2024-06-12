@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Schema;
@@ -156,5 +157,51 @@ class MenuController extends Controller
         $user->save();
 
         return redirect()->route('menu.importar')->with('success', 'Table imported successfully');
+    }
+
+    public function crear()
+    {
+        // Lógica para mostrar la vista de crear tabla
+        return view('menu.crear');
+    }
+
+    public function store(Request $request)
+    {
+        // Validar los datos del formulario
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'numCampos' => 'required|integer|min:1|max:7',
+        ]);
+
+        $user = Auth::user();
+        $nombre = $request->input('nombre') . '_' . $user->id;
+        $numCampos = $request->input('numCampos');
+
+        // Verificar si la tabla ya existe
+        if (Schema::hasTable($nombre)) {
+            return redirect()->route('menu.crear')->with('error', 'Table already exists and was not created');
+        }
+
+        // Crear la tabla en la base de datos
+        Schema::create($nombre, function ($table) use ($request, $numCampos, $user) {
+            $table->id();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+            $table->integer('owner_id');
+
+            for ($i = 0; $i < $numCampos; $i++) {
+                $fieldName = $request->input("field_name_$i");
+                $fieldType = $request->input("field_type_$i");
+                $isNullable = $request->has("field_nullable_$i");
+
+                $column = $table->$fieldType($fieldName);
+                if ($isNullable) {
+                    $column->nullable();
+                }
+            }
+        });
+
+        // Redirigir con un mensaje de éxito
+        return redirect()->route('menu.crear')->with('success', 'Table created successfully');
     }
 }

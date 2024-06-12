@@ -42,6 +42,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // Rutas del menú
     Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
     Route::get('/menu/crear', [MenuController::class, 'crear'])->name('menu.crear');
+    Route::post('/menu/store', [MenuController::class, 'store'])->name('menu.store');
     Route::get('/menu/gestionar', [MenuController::class, 'gestionar'])->name('menu.gestionar');
     Route::get('/menu/importar', [MenuController::class, 'importar'])->name('menu.importar');
     Route::post('/menu/importar', [MenuController::class, 'importTable'])->name('menu.importTable');
@@ -54,16 +55,14 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/tables/share/{table}', [TableController::class, 'share'])->name('table.share');
     Route::post('/tables/share/{table}', [TableController::class, 'processShare'])->name('table.processShare');
     Route::delete('/tables/shared-access/{id}', [TableController::class, 'deleteSharedAccess'])->name('table.deleteSharedAccess');
-    
     Route::get('/table/{table}/export/csv', [TableController::class, 'exportCsv'])->name('table.export.csv');
     Route::get('/table/{table}/export/excel', [TableController::class, 'exportExcel'])->name('table.export.excel');
     Route::get('/table/{table}/export/pdf', [TableController::class, 'exportPdf'])->name('table.export.pdf');
-    
-    Route::get('/table/edit/{table}', [TableController::class, 'edit'])->name('table.edit');
     Route::delete('table/{table}/{id}', [TableController::class, 'deleteRecord'])->name('table.deleteRecord');
     Route::put('/table/{table}/{id}', [TableController::class, 'update'])->name('table.update');
     Route::get('/table/{table}/create', [TableController::class, 'create'])->name('table.create');
     Route::post('/table/{table}/store', [TableController::class, 'store'])->name('table.store');
+    Route::post('/table/{table}/send-email', [TableController::class, 'sendEmail'])->name('table.sendEmail');
 });
 
 // Rutas de administración
@@ -76,5 +75,3 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
 Route::fallback(function () {
     return redirect()->route('dashboard');
 });
-
-Route::post('/table/{table}/send-email', [TableController::class, 'sendEmail'])->name('table.sendEmail');
