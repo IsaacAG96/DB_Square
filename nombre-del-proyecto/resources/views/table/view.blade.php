@@ -17,7 +17,7 @@
                         </svg>
                     </li>
                     <li class="flex items-center">
-                        <a href="{{ route('table.gestionar') }}" class="text-blue-500 hover:text-blue-700">{{__('Manage Tables')}}</a>
+                        <a href="{{ route('menu.gestionar') }}" class="text-blue-500 hover:text-blue-700">{{__('Manage Tables')}}</a>
                         <svg class="fill-current w-3 h-3 mx-3" viewBox="0 0 320 512">
                             <path d="M285.5 272H12c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h273.5c4.7 0 9.2-2.7 11.3-7l96-176c3.9-7.1 1-15.8-6.2-19.8l-14.6-8.2c-7.2-4.1-15.9-1-19.8 6.2l-96 176c-2.1 4.3-6.6 7-11.3 7z" />
                         </svg>
@@ -120,7 +120,7 @@
                 </a>
             </div>
             <div class="mt-4 text-right">
-                <a href="{{ route('table.gestionar') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition ease-in-out duration-150">
+                <a href="{{ url()->previous() }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition ease-in-out duration-150">
                     {{__('Back')}}
                 </a>
             </div>

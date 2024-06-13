@@ -83,12 +83,9 @@
                     </div>
                     @endif
                 </div>
-
-                <!-- Custom Tables Section -->
-                <div class="mb-4">
-                    <h3 class="text-2xl font-semibold text-gray-900">{{ __('Custom Tables') }}</h3>
-                </div>
-                <div class="card-body">
+                <!-- Tablas Personalizadas Section -->
+                <div class="mb-6">
+                    <h4 class="text-xl font-semibold text-gray-800">{{ __('Custom Tables') }}</h4>
                     @if (empty($customTables))
                     <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
                         {{ __('There are no custom tables available to display.') }}
@@ -105,8 +102,8 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach ($customTables as $table)
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase">
-                                        {{ str_replace('_', ' ', \Illuminate\Support\Str::beforeLast($table, '_')) }}
+                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                        {{ preg_replace('/_\d+$/', '', str_replace('_', ' ', $table)) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap space-x-2">
                                         <a href="{{ route('table.view', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-indigo-200 text-indigo-600 hover:bg-indigo-300 transition duration-150 rounded-md">{{ __('View') }}</a>
