@@ -87,14 +87,20 @@
                                 @php
                                 $owner = $owners[$value];
                                 @endphp
-                                <div class="flex items-center">
+                                <div class="flex items-center justify-center">
                                     {{ $owner->name }}#{{ $value }}
                                     @if ($owner->profile_photo_path)
-                                        <img src="{{ asset('storage/' . $owner->profile_photo_path) }}" alt="Profile Photo" class="ml-2 mr-1 w-10 h-10 rounded-full border">
+                                    <img src="{{ asset('storage/' . $owner->profile_photo_path) }}" alt="Profile Photo" class="ml-2 mr-1 w-10 h-10 rounded-full border">
                                     @endif
                                 </div>
+                                @elseif ($key == 'album_cover')
+                                <div class="flex justify-center">
+                                    <img src="{{ $value }}" alt="{{ $row->title }} cover" class="w-16 h-16 object-cover">
+                                </div>
                                 @else
-                                {{ $value }}
+                                <div class="flex justify-center">
+                                    {{ $value }}
+                                </div>
                                 @endif
                             </td>
                             @endif
