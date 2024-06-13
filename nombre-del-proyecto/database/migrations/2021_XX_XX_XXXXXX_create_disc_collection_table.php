@@ -19,6 +19,7 @@ class CreateDiscCollectionTable extends Migration
             $table->string('title', 255);
             $table->string('artist', 255)->nullable();
             $table->string('genre', 100)->nullable();
+            $table->string('album_cover', 255)->nullable();
             $table->integer('release_year')->nullable();
             $table->string('record_label', 100)->nullable();
             $table->string('isrc_code', 20)->nullable();
