@@ -11,14 +11,14 @@
                         </svg>
                     </li>
                     <li class="flex items-center">
-                        <a href="{{ route('table.view', ['table' => $table]) }}" class="text-blue-500 hover:text-blue-700">{{__('View Table')}}: {{ str_replace('_', ' ', preg_replace('/_[^_]*$/', '', $table)) }}</a>
+                        <a href="{{ route('table.view', ['table' => $table]) }}" class="text-blue-500 hover:text-blue-700">{{__('View Table')}}: {{ str_replace('_', ' ', $processedTableName) }}</a>
                     </li>
                 </ol>
             </nav>
             <!-- Fin de migas de pan -->
 
             <div class="mb-4">
-                <h3 class="text-xl font-semibold text-gray-900 uppercase">{{ str_replace('_', ' ', preg_replace('/_[^_]*$/', '', $table)) }}</h3>
+                <h3 class="text-xl font-semibold text-gray-900 uppercase">{{ str_replace('_', ' ', $processedTableName) }}</h3>
             </div>
             @if ($data->isEmpty())
             <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">

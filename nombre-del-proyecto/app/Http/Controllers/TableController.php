@@ -59,40 +59,44 @@ class TableController extends BaseController
         $userId = Auth::id();
         $sortField = $request->input('sort_field', 'id');
         $sortOrder = $request->input('sort_order', 'asc');
-
+    
         if (!Schema::hasTable($table)) {
             return redirect()->route('table.gestionar')->with('error', 'The table does not exist');
         }
-
+    
         $sharedOwners = DB::table('share')
             ->where('shared_user', $userId)
             ->where('table_type', $table)
             ->pluck('owner')
             ->toArray();
-
+    
         $allowedOwners = array_merge([$userId], $sharedOwners);
-
+    
         $filters = $request->except(['sort_field', 'sort_order', 'page']);
-
+    
         $query = DB::table($table)->whereIn('owner_id', $allowedOwners);
-
+    
         foreach ($filters as $field => $value) {
             if ($value) {
                 $query->where($field, 'like', "%{$value}%");
             }
         }
-
+    
         $perPage = 10;
         $data = $query->orderBy($sortField, $sortOrder)->paginate($perPage);
-
+    
         $ownerIds = collect($data->items())->pluck('owner_id')->unique()->toArray();
         $owners = DB::table('users')
             ->whereIn('id', $ownerIds)
             ->get(['id', 'name', 'profile_photo_path'])
             ->keyBy('id');
-
+    
+        // Procesar el nombre de la tabla
+        $processedTableName = $this->processTableName($table);
+    
         return view('table.view', [
             'table' => $table,
+            'processedTableName' => $processedTableName,
             'data' => $data,
             'owners' => $owners,
             'sortField' => $sortField,
@@ -100,6 +104,15 @@ class TableController extends BaseController
             'filters' => $filters
         ]);
     }
+    
+    private function processTableName($tableName)
+    {
+        if (preg_match('/_(\d+)$/', $tableName)) {
+            return preg_replace('/_\d+$/', '', $tableName);
+        }
+        return $tableName;
+    }
+    
 
     public function edit(Request $request, $table)
     {
