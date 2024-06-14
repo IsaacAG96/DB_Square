@@ -291,7 +291,7 @@ class TableController extends BaseController
             DB::table('users')->where('id', $userId)->update([$fieldToUpdate => false]);
         }
 
-        return redirect()->route('table.gestionar')->with('success', 'Table and records deleted successfully');
+        return redirect()->route('menu.gestionar')->with('success', 'Table and records deleted successfully');
     }
 
     public function share($table)
