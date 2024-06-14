@@ -25,103 +25,102 @@
                 <!-- End of Breadcrumbs -->
 
                 <div class="mb-4">
-                    <h3 class="text-2xl font-semibold text-gray-900">{{ __('Table List') }}</h3>
+                    <h3 class="text-2xl font-semibold text-gray-900">{{ __('Templates Tables') }}</h3>
                 </div>
                 <div class="card-body">
                     @if ($tables->isEmpty())
-                    <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
-                        {{ __('There are no tables available to display.') }}
-                    </div>
+                        <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
+                            {{ __('There are no tables available to display.') }}
+                        </div>
                     @else
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Table Name') }}</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Actions') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @foreach ($tables as $table)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
-                                        @if($table == 'accounts_list')
-                                        <img src="{{ asset('images/icons/accounts_list.png') }}" class="w-10 h-10 mr-2" alt="Accounts List">
-                                        @elseif($table == 'contacts')
-                                        <img src="{{ asset('images/icons/contacts.png') }}" class="w-10 h-10 mr-2" alt="Contacts">
-                                        @elseif($table == 'disc_collection')
-                                        <img src="{{ asset('images/icons/disc_collection.png') }}" class="w-10 h-10 mr-2" alt="Disc Collection">
-                                        @elseif($table == 'program_list')
-                                        <img src="{{ asset('images/icons/program_list.png') }}" class="w-10 h-10 mr-2" alt="Program List">
-                                        @elseif($table == 'shopping_list')
-                                        <img src="{{ asset('images/icons/shopping_list.png') }}" class="w-10 h-10 mr-2" alt="Program List">
-                                        @elseif($table == 'travel_collection')
-                                        <img src="{{ asset('images/icons/travel_collection.png') }}" class="w-10 h-10 mr-2" alt="Program List">
-                                        @else
-                                        {{ str_replace('_', ' ', $table) }}
-                                        @endif
-                                        {{ str_replace('_', ' ', $table) }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap space-x-2">
-                                        <a href="{{ route('table.view', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-indigo-200 text-indigo-600 hover:bg-indigo-300 transition duration-150 rounded-md">{{ __('View') }}</a>
-                                        <a href="{{ route('table.edit', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-yellow-200 text-yellow-600 hover:bg-yellow-300 transition duration-150 rounded-md">{{ __('Edit') }}</a>
-                                        <a href="{{ route('table.share', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-green-200 text-green-600 hover:bg-green-300 transition duration-150 rounded-md">{{ __('Share') }}</a>
-                                        <form action="{{ route('table.delete', ['table' => $table]) }}" method="POST" class="delete-form" style="display: inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-200 text-red-600 hover:bg-red-300 transition duration-150 rounded-md">{{ __('Delete') }}</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- Add pagination -->
-                    <div class="mt-4">
-                        {{ $tables->links('vendor.pagination.bootstrap-4') }}
-                    </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Table Name') }}</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Actions') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach ($tables as $table)
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                                @if($table == 'accounts_list')
+                                                    <img src="{{ asset('images/icons/accounts_list.png') }}" class="w-10 h-10 mr-2" alt="Accounts List">
+                                                @elseif($table == 'contacts')
+                                                    <img src="{{ asset('images/icons/contacts.png') }}" class="w-10 h-10 mr-2" alt="Contacts">
+                                                @elseif($table == 'disc_collection')
+                                                    <img src="{{ asset('images/icons/disc_collection.png') }}" class="w-10 h-10 mr-2" alt="Disc Collection">
+                                                @elseif($table == 'program_list')
+                                                    <img src="{{ asset('images/icons/program_list.png') }}" class="w-10 h-10 mr-2" alt="Program List">
+                                                @elseif($table == 'shopping_list')
+                                                    <img src="{{ asset('images/icons/shopping_list.png') }}" class="w-10 h-10 mr-2" alt="Shopping List">
+                                                @elseif($table == 'travel_collection')
+                                                    <img src="{{ asset('images/icons/travel_collection.png') }}" class="w-10 h-10 mr-2" alt="Travel Collection">
+                                                @else
+                                                    {{ str_replace('_', ' ', $table) }}
+                                                @endif
+                                                {{ str_replace('_', ' ', $table) }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap space-x-2">
+                                                <a href="{{ route('table.view', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-indigo-200 text-indigo-600 hover:bg-indigo-300 transition duration-150 rounded-md">{{ __('View') }}</a>
+                                                <a href="{{ route('table.edit', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-yellow-200 text-yellow-600 hover:bg-yellow-300 transition duration-150 rounded-md">{{ __('Edit') }}</a>
+                                                <a href="{{ route('table.share', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-green-200 text-green-600 hover:bg-green-300 transition duration-150 rounded-md">{{ __('Share') }}</a>
+                                                <form action="{{ route('table.delete', ['table' => $table]) }}" method="POST" class="delete-form" style="display: inline-block;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-200 text-red-600 hover:bg-red-300 transition duration-150 rounded-md">{{ __('Delete') }}</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Add pagination -->
+                        <div class="mt-4">
+                            {{ $tables->links('vendor.pagination.bootstrap-4') }}
+                        </div>
                     @endif
                 </div>
                 <!-- Tablas Personalizadas Section -->
                 <div class="mb-6">
-                    <h4 class="text-xl font-semibold text-gray-800">{{ __('Custom Tables') }}</h4>
+                    <h3 class="text-2xl font-semibold text-gray-900">{{ __('Custom Tables') }}</h4>
                     @if (empty($customTables))
-                    <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
-                        {{ __('There are no custom tables available to display.') }}
-                    </div>
+                        <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
+                            {{ __('There are no custom tables available to display.') }}
+                        </div>
                     @else
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Table Name') }}</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Actions') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @foreach ($customTables as $table)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
-                                        {{ preg_replace('/_\d+$/', '', str_replace('_', ' ', $table)) }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap space-x-2">
-                                        <a href="{{ route('table.view', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-indigo-200 text-indigo-600 hover:bg-indigo-300 transition duration-150 rounded-md">{{ __('View') }}</a>
-                                        <a href="{{ route('table.edit', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-yellow-200 text-yellow-600 hover:bg-yellow-300 transition duration-150 rounded-md">{{ __('Edit') }}</a>
-                                        <form action="{{ route('table.custom-delete', ['table' => $table]) }}" method="POST" class="delete-form" style="display: inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-200 text-red-600 hover:bg-red-300 transition duration-150 rounded-md">{{ __('Delete') }}</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Table Name') }}</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Actions') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach ($customTables as $table)
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                                {{ str_replace('_', ' ', preg_replace('/_[^_]*$/', '', $table)) }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap space-x-2">
+                                                <a href="{{ route('table.view', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-indigo-200 text-indigo-600 hover:bg-indigo-300 transition duration-150 rounded-md">{{ __('View') }}</a>
+                                                <a href="{{ route('table.edit', ['table' => $table]) }}" class="inline-flex items-center px-4 py-2 bg-yellow-200 text-yellow-600 hover:bg-yellow-300 transition duration-150 rounded-md">{{ __('Edit') }}</a>
+                                                <form action="{{ route('table.custom-delete', ['table' => $table]) }}" method="POST" class="delete-form" style="display: inline-block;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-200 text-red-600 hover:bg-red-300 transition duration-150 rounded-md">{{ __('Delete') }}</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     @endif
                 </div>
-
                 <div class="mt-4 text-right">
                     <a href="{{ route('menu.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition ease-in-out duration-150">
                         {{ __('Back to Menu') }}
