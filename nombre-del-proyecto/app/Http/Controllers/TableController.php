@@ -260,30 +260,29 @@ class TableController extends BaseController
         if (!Schema::hasTable($table)) {
             return redirect()->route('table.gestionar')->with('error', 'The table does not exist');
         }
-
+    
         // Verificar que el usuario tenga permisos para eliminar
         $userId = Auth::id();
-        $allowedOwners = DB::table('share')
+        $sharedOwners = DB::table('share')
             ->where('shared_user', $userId)
             ->where('table_type', $table)
-            ->where('delete', true) // Asumimos que hay un permiso de eliminación, similar a 'edit'
             ->pluck('owner')
             ->toArray();
-
-        $allowedOwners[] = $userId;
-
+    
+        $allowedOwners = array_merge([$userId], $sharedOwners);
+    
         $record = DB::table($table)->where('id', $id)->first();
-
+    
         if (!$record || !in_array($record->owner_id, $allowedOwners)) {
             return redirect()->route('table.edit', ['table' => $table])->with('error', 'You do not have permission to delete this record');
         }
-
+    
         // Eliminar el registro
         DB::table($table)->where('id', $id)->delete();
-
+    
         return redirect()->route('table.edit', ['table' => $table])->with('success', 'Record deleted successfully');
     }
-
+    
     public function deleteTable(Request $request, $table)
     {
         $userId = Auth::user()->id;
