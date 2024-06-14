@@ -49,55 +49,57 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach ($tables as $table => $columns)
-                                <tr>
-                                    @if($table == 'accounts_list')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
-                                        <img src="{{ asset('images/icons/accounts_list.png') }}" class="w-10 h-10 mr-2" alt="Accounts List">
-                                        {{ ucfirst(str_replace('_', ' ', $table)) }}
-                                    </td>
-                                    @elseif($table == 'contacts')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
-                                        <img src="{{ asset('images/icons/contacts.png') }}" class="w-10 h-10 mr-2" alt="Contacts">
-                                        {{ ucfirst(str_replace('_', ' ', $table)) }}
-                                    </td>
-                                    @elseif($table == 'disc_collection')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
-                                        <img src="{{ asset('images/icons/disc_collection.png') }}" class="w-10 h-10 mr-2" alt="Disc Collection">
-                                        {{ ucfirst(str_replace('_', ' ', $table)) }}
-                                    </td>
-                                    @elseif($table == 'program_list')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
-                                        <img src="{{ asset('images/icons/program_list.png') }}" class="w-10 h-10 mr-2" alt="Program List">
-                                        {{ ucfirst(str_replace('_', ' ', $table)) }}
-                                    </td>
-                                    @elseif($table == 'shopping_list')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
-                                        <img src="{{ asset('images/icons/shopping_list.png') }}" class="w-10 h-10 mr-2" alt="Program List">
-                                        {{ ucfirst(str_replace('_', ' ', $table)) }}
-                                    </td>
-                                    @elseif($table == 'travel_collection')
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
-                                        <img src="{{ asset('images/icons/travel_collection.png') }}" class="w-10 h-10 mr-2" alt="Program List">
-                                        {{ ucfirst(str_replace('_', ' ', $table)) }}
-                                    </td>
-                                    @else
-                                    <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
-                                        {{ ucfirst(str_replace('_', ' ', $table)) }}
-                                    </td>
-                                    @endif
-                                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ implode(' | ', array_map('ucfirst', array_map('str_replace', array_fill(0, count($columns), '_'), array_fill(0, count($columns), ' '), $columns))) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right">
-                                        @if (isset($importedTables[$table]) && $importedTables[$table])
-                                        <span class="text-green-500 font-bold">&#10003;</span>
+                                    @if (in_array($table, ['contacts', 'disc_collection', 'travel_collection', 'shopping_list', 'program_list', 'accounts_list']))
+                                    <tr>
+                                        @if($table == 'accounts_list')
+                                        <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                            <img src="{{ asset('images/icons/accounts_list.png') }}" class="w-10 h-10 mr-2" alt="Accounts List">
+                                            {{ ucfirst(str_replace('_', ' ', $table)) }}
+                                        </td>
+                                        @elseif($table == 'contacts')
+                                        <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                            <img src="{{ asset('images/icons/contacts.png') }}" class="w-10 h-10 mr-2" alt="Contacts">
+                                            {{ ucfirst(str_replace('_', ' ', $table)) }}
+                                        </td>
+                                        @elseif($table == 'disc_collection')
+                                        <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                            <img src="{{ asset('images/icons/disc_collection.png') }}" class="w-10 h-10 mr-2" alt="Disc Collection">
+                                            {{ ucfirst(str_replace('_', ' ', $table)) }}
+                                        </td>
+                                        @elseif($table == 'program_list')
+                                        <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                            <img src="{{ asset('images/icons/program_list.png') }}" class="w-10 h-10 mr-2" alt="Program List">
+                                            {{ ucfirst(str_replace('_', ' ', $table)) }}
+                                        </td>
+                                        @elseif($table == 'shopping_list')
+                                        <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                            <img src="{{ asset('images/icons/shopping_list.png') }}" class="w-10 h-10 mr-2" alt="Shopping List">
+                                            {{ ucfirst(str_replace('_', ' ', $table)) }}
+                                        </td>
+                                        @elseif($table == 'travel_collection')
+                                        <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                            <img src="{{ asset('images/icons/travel_collection.png') }}" class="w-10 h-10 mr-2" alt="Travel Collection">
+                                            {{ ucfirst(str_replace('_', ' ', $table)) }}
+                                        </td>
                                         @else
-                                        <form method="POST" action="{{ route('menu.importTable') }}" class="inline-block">
-                                            @csrf
-                                            <input type="hidden" name="table" value="{{ $table }}">
-                                            <button type="submit" class="bg-indigo-500 text-white font-bold py-2 px-4 rounded hover:bg-indigo-700 transition duration-150">{{__('Import')}}</button>
-                                        </form>
+                                        <td class="px-6 py-4 whitespace-nowrap font-extrabold text-gray-800 text-sm uppercase flex items-center">
+                                            {{ ucfirst(str_replace('_', ' ', $table)) }}
+                                        </td>
                                         @endif
-                                    </td>
-                                </tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ implode(' | ', array_map('ucfirst', array_map('str_replace', array_fill(0, count($columns), '_'), array_fill(0, count($columns), ' '), $columns))) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right">
+                                            @if (isset($importedTables[$table]) && $importedTables[$table])
+                                            <span class="text-green-500 font-bold">&#10003;</span>
+                                            @else
+                                            <form method="POST" action="{{ route('menu.importTable') }}" class="inline-block">
+                                                @csrf
+                                                <input type="hidden" name="table" value="{{ $table }}">
+                                                <button type="submit" class="bg-indigo-500 text-white font-bold py-2 px-4 rounded hover:bg-indigo-700 transition duration-150">{{__('Import')}}</button>
+                                            </form>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    @endif
                                 @endforeach
                             </tbody>
                         </table>
