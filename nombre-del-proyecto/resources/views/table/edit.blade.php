@@ -11,13 +11,13 @@
                         </svg>
                     </li>
                     <li class="flex items-center">
-                        <a href="{{ route('table.edit', ['table' => $table]) }}" class="text-blue-500 hover:text-blue-700">{{__('Edit')}} {{ str_replace('_', ' ', preg_replace('/_[^_]*$/', '', $table)) }}</a>
+                        <a href="{{ route('table.edit', ['table' => $table]) }}" class="text-blue-500 hover:text-blue-700">{{__('Edit')}} {{ str_replace('_', ' ', preg_replace('/_[0-9]+$/', '', $table)) }}</a>
                     </li>
                 </ol>
             </nav>
             <!-- Fin de migas de pan -->
             <div class="mb-4 flex justify-between items-center">
-                <h3 class="text-xl font-semibold text-gray-900">{{__('Edit')}} <span class="uppercase">{{ str_replace('_', ' ', preg_replace('/_[^_]*$/', '', $table)) }}</span></h3>
+                <h3 class="text-xl font-semibold text-gray-900">{{__('Edit')}} <span class="uppercase">{{ str_replace('_', ' ', preg_replace('/_[0-9]+$/', '', $table)) }}</span></h3>
                 <a href="{{ route('table.create', ['table' => $table]) }}" class="px-4 py-2 bg-green-500 text-white rounded">{{__('Add Row')}}</a>
             </div>
             @if (session('success'))
