@@ -57,13 +57,15 @@
                             </select>
                         </div>
                         <div id="fieldsContainer"></div>
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition duration-150 rounded-md">
+                        <button type="submit" class="px-4 py-2 bg-indigo-500 text-white hover:bg-indigo-700 transition duration-300 rounded">
                             {{ __('Create') }}
                         </button>
-                        <a href="{{ route('menu.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white hover:bg-gray-700 transition duration-150 rounded-md">
-                            {{ __('Back') }}
-                        </a>
                     </form>
+                    <div class="mt-6 text-right">
+                    <a href="{{ route('menu.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition ease-in-out duration-150">
+                        {{__('Back')}}
+                    </a>
+                </div>
                 </div>
             </div>
         </div>
