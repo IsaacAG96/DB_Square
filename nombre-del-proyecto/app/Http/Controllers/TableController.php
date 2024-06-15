@@ -82,7 +82,7 @@ class TableController extends BaseController
             }
         }
     
-        $perPage = 10;
+        $perPage = 7;
         $data = $query->orderBy($sortField, $sortOrder)->paginate($perPage);
     
         $ownerIds = collect($data->items())->pluck('owner_id')->unique()->toArray();

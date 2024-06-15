@@ -20,6 +20,7 @@
             <div class="mb-4">
                 <h3 class="text-xl font-semibold text-gray-900 uppercase">{{ str_replace('_', ' ', $processedTableName) }}</h3>
             </div>
+
             @if ($data->isEmpty())
             <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
                 {{__('No records available to show.')}}
@@ -41,13 +42,23 @@
                     </div>
                 </div>
             </form><br>
+
+            <!-- Column visibility checkboxes -->
+            <div class="mb-4 mt-4">
+                @foreach (array_keys((array) $data->first()) as $column)
+                @if ($column != 'id')
+                <label class="mr-4 text-xs"><input type="checkbox" class="toggle-column text-xs text-indigo-400 bg-gray-100" data-column="{{ $column }}" checked> {{ $column == 'id_propietario' ? __('Owner') : $column }}</label>
+                @endif
+                @endforeach
+            </div>
+
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 table-auto border">
                     <thead class="bg-gray-100">
                         <tr>
                             @foreach (array_keys((array) $data->first()) as $column)
                             @if ($column != 'id')
-                            <th scope="col" class="px-2 py-2 text-center text-xs font-medium text-gray-900 uppercase tracking-wider">
+                            <th scope="col" class="px-2 py-2 text-center text-xs font-medium text-gray-900 uppercase tracking-wider toggle-header" data-column="{{ $column }}">
                                 {{ $column == 'id_propietario' ? __('Owner') : $column }}
                                 <a href="{{ route('table.view', ['table' => $table, 'sort_field' => $column, 'sort_order' => ($sortField == $column && $sortOrder == 'asc') ? 'desc' : 'asc'] + request()->except(['sort_field', 'sort_order', 'page'])) }}">
                                     @if ($sortField == $column)
@@ -70,7 +81,7 @@
                         <tr class="{{ $index % 2 == 0 ? 'bg-indigo-100' : '' }} text-center">
                             @foreach ($row as $key => $value)
                             @if ($key != 'id')
-                            <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-600">
+                            <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-600 toggle-cell" data-column="{{ $key }}">
                                 @if ($key == 'owner_id')
                                 @php
                                 $owner = $owners[$value];
@@ -120,4 +131,20 @@
             </div>
         </div>
     </div>
+
+    <!-- JavaScript for toggling column visibility -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('.toggle-column');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    const column = this.dataset.column;
+                    const cells = document.querySelectorAll(`.toggle-cell[data-column="${column}"], .toggle-header[data-column="${column}"]`);
+                    cells.forEach(cell => {
+                        cell.style.display = this.checked ? '' : 'none';
+                    });
+                });
+            });
+        });
+    </script>
 </x-app-layout>
